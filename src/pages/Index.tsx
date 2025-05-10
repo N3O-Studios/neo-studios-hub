@@ -16,14 +16,14 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary text-white font-light">
-      {/* Logo at the top center */}
-      <div className={`flex justify-center pt-8 lg:pt-12 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary to-primary/80 text-white font-light">
+      {/* Logo at the top center - note it has a higher z-index */}
+      <div className={`flex justify-center pt-6 lg:pt-10 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-10`}>
         <Logo />
       </div>
 
-      {/* Main content */}
-      <div className={`flex-grow flex flex-col items-center justify-center transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Main content - positioned closer to the logo */}
+      <div className={`flex-grow flex flex-col items-center justify-center -mt-4 transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
         <OptionButtons />
       </div>
 

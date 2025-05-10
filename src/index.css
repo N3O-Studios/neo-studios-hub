@@ -58,9 +58,9 @@
   }
   
   .option-button {
-    @apply px-8 py-4 text-white border border-secondary/40 rounded-lg 
-           transition-all duration-300 hover:bg-secondary hover:border-secondary
-           hover:scale-105 hover:shadow-lg hover:shadow-secondary/30;
+    @apply px-8 py-4 text-white border border-[#1EAEDB]/40 rounded-lg 
+           transition-all duration-300 hover:bg-[#1EAEDB] hover:border-[#1EAEDB]
+           hover:scale-105 hover:shadow-lg hover:shadow-[#1EAEDB]/30;
   }
   
   .social-icon {
