@@ -43,7 +43,8 @@
   }
 
   body {
-    @apply bg-primary text-foreground;
+    @apply bg-primary text-foreground font-light;
+    font-family: "Bahnschrift Light", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   }
 }
 
@@ -57,13 +58,24 @@
   }
   
   .option-button {
-    @apply px-8 py-4 text-white border border-white/20 rounded-lg 
+    @apply px-8 py-4 text-white border border-secondary/40 rounded-lg 
            transition-all duration-300 hover:bg-secondary hover:border-secondary
-           hover:scale-105 hover:shadow-lg hover:shadow-secondary/20;
+           hover:scale-105 hover:shadow-lg hover:shadow-secondary/30;
   }
   
   .social-icon {
     @apply w-8 h-8 opacity-80 transition-all duration-300 
            hover:opacity-100 hover:scale-110;
   }
+
+  .text-glow {
+    text-shadow: 0 0 8px #428ce2, 0 0 12px #428ce2, 0 0 16px #428ce2;
+  }
+}
+
+@font-face {
+  font-family: "Bahnschrift Light";
+  src: local("Bahnschrift Light"), local("Bahnschrift-Light");
+  font-weight: 300;
+  font-style: normal;
 }

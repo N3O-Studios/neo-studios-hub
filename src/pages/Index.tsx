@@ -16,7 +16,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary text-white">
+    <div className="min-h-screen flex flex-col bg-primary text-white font-light">
       {/* Logo at the top center */}
       <div className={`flex justify-center pt-8 lg:pt-12 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
         <Logo />

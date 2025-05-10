@@ -13,7 +13,7 @@ const Logo = () => {
       <img 
         src="/lovable-uploads/9aad7a26-d478-4099-b926-2f46ac9a3edd.png" 
         alt="N3O Studios Logo" 
-        className="w-48 h-auto max-w-full"
+        className="w-64 h-auto max-w-full" // Increased from w-48 to w-64
       />
     </div>
   );

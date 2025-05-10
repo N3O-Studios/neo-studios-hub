@@ -10,11 +10,15 @@ const Email = () => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <img 
-        src="/lovable-uploads/489bd192-6b01-47f8-9447-6ba36532bb5e.png" 
-        alt="N3O Studios Email" 
-        className="w-36 h-auto"
-      />
+      <a 
+        href="mailto:contact@n3ostudios.com" 
+        className={`text-lg text-white tracking-wide ${
+          isHovered ? 'text-glow text-secondary' : ''
+        } transition-all duration-300`}
+        aria-label="Email N3O Studios"
+      >
+        contact@n3ostudios.com
+      </a>
     </div>
   );
 };
