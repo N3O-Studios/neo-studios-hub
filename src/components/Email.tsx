@@ -6,14 +6,12 @@ const Email = () => {
 
   return (
     <div 
-      className={`relative transition-all duration-300 ${isHovered ? 'email-hover' : ''}`}
+      className="relative transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Upper right angle */}
-      <div className={`absolute -top-3 -right-3 w-3 h-3 border-t-2 border-r-2 border-[#428ce2] ${
-        isHovered ? 'shadow-[0_0_8px_#428ce2]' : ''
-      } transition-all duration-300`}></div>
+      <div className="absolute -top-3 -right-3 w-3 h-3 border-t-2 border-r-2 border-[#428ce2]"></div>
       
       <div className="flex flex-col items-start">
         <span className="text-sm text-white/80">Contact:</span>
@@ -27,9 +25,7 @@ const Email = () => {
       </div>
       
       {/* Lower left angle */}
-      <div className={`absolute -bottom-3 -left-3 w-3 h-3 border-b-2 border-l-2 border-[#428ce2] ${
-        isHovered ? 'shadow-[0_0_8px_#428ce2]' : ''
-      } transition-all duration-300`}></div>
+      <div className="absolute -bottom-3 -left-3 w-3 h-3 border-b-2 border-l-2 border-[#428ce2]"></div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 
-import { Youtube, X } from 'lucide-react';
+import { Youtube } from 'lucide-react';
 
 const SocialIcons = () => {
   const socialLinks = [
@@ -32,7 +32,14 @@ const SocialIcons = () => {
     },
     {
       name: 'X (Twitter)',
-      icon: <X className="social-icon" />, // Changed from Twitter to X icon
+      // Custom X logo from uploaded image
+      icon: (
+        <img
+          src="/lovable-uploads/247bfecf-1ec3-493f-a978-6fce6f28adb8.png"
+          alt="X Logo"
+          className="social-icon w-6 h-6 opacity-80 transition-all duration-300 hover:opacity-100 hover:scale-110"
+        />
+      ),
       url: 'https://x.com/n3ostudios'
     }
   ];
