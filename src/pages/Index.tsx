@@ -17,13 +17,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#1e1e20] to-[#2a2a30] text-white font-light">
-      {/* Logo at the top center with proper z-index */}
-      <div className={`flex justify-center pt-10 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0`}>
+      {/* Logo with proper z-index */}
+      <div className={`flex justify-center pt-6 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0`}>
         <Logo />
       </div>
 
-      {/* Main content positioned to create a sleek overlap with the logo */}
-      <div className={`flex-grow flex flex-col items-center justify-center -mt-12 transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-10`}>
+      {/* Main content - AI interface and productions */}
+      <div className={`flex-grow flex flex-col items-center justify-center transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-10`}>
         <OptionButtons />
       </div>
 
