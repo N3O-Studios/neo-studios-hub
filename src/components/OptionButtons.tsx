@@ -26,8 +26,8 @@ const OptionButtons = () => {
   const handleSendMessage = async () => {
     if (!message.trim()) return;
     
-    // Add user message to chat
-    const userMessage = { role: 'user', content: message };
+    // Add user message to chat - explicitly typing as ChatMessage
+    const userMessage: ChatMessage = { role: 'user', content: message };
     setChatHistory(prev => [...prev, userMessage]);
     setIsLoading(true);
     setMessage('');
@@ -36,7 +36,7 @@ const OptionButtons = () => {
       // This is a placeholder. In the future, this will connect to your Supabase Edge Function
       // that will use the OpenRouter API with your Python chatbot logic
       setTimeout(() => {
-        const assistantMessage = { 
+        const assistantMessage: ChatMessage = { 
           role: 'assistant', 
           content: "I'm N3O, an AI assistant designed to help with various creative tasks. Once connected to Supabase, I'll be able to provide more personalized responses using your Python chatbot's logic." 
         };
