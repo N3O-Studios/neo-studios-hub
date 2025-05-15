@@ -2,7 +2,6 @@
 import { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/types/chat';
-import { Separator } from "@/components/ui/separator";
 
 interface ChatDisplayProps {
   chatHistory: ChatMessage[];
@@ -24,15 +23,15 @@ export const ChatDisplay = ({
 
   return (
     <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 mb-4 h-[400px] overflow-hidden">
-      <ScrollArea className="h-full p-4">
+      <ScrollArea className="h-full">
         {chatHistory.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
+          <div className="flex items-center justify-center h-full p-4">
             <p className="text-white/70 text-center animate-pulse">
               Ask NS anything to get started...
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4 p-4">
             {chatHistory.map((message, index) => (
               <div 
                 key={index} 
