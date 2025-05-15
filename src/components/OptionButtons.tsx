@@ -1,5 +1,5 @@
 
-import { useState, useCallback, memo, useEffect } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { ChatDisplay } from './chat/ChatDisplay';
 import { ChatInput } from './chat/ChatInput';
 import { ToolButtons } from './chat/ToolButtons';
@@ -10,14 +10,6 @@ import { ChatMessage, GeminiRequest, GeminiResponse } from '@/types/chat';
 const OptionButtons = memo(() => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorCount, setErrorCount] = useState(0);
-  
-  // Reset error count after successful API call
-  useEffect(() => {
-    if (chatHistory.length > 0 && !isLoading) {
-      setErrorCount(0);
-    }
-  }, [chatHistory, isLoading]);
   
   // Memoize the send message handler for performance
   const handleSendMessage = useCallback(async (message: string) => {
@@ -48,7 +40,7 @@ const OptionButtons = memo(() => {
       
       // Performance optimization: Use AbortController for timeout
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 20000); // Increased timeout
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
       
       const response = await fetch(url, {
         method: 'POST',
@@ -84,24 +76,14 @@ const OptionButtons = memo(() => {
       setChatHistory(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
-      // Increment error count
-      setErrorCount(prev => prev + 1);
-      
-      // Custom error messages based on error count
-      let errorMessage = 'Sorry, I encountered an error processing your request. Please try again later.';
-      
-      if (errorCount > 2) {
-        errorMessage = 'There seems to be an ongoing issue with the connection. Please try again in a few minutes or refresh the page.';
-      }
-      
       setChatHistory(prev => [...prev, { 
         role: 'assistant', 
-        content: errorMessage
+        content: 'Sorry, I encountered an error processing your request. Please try again later.' 
       }]);
     } finally {
       setIsLoading(false);
     }
-  }, [errorCount]);
+  }, []);
 
   // Memoize the tool handler for performance
   const handleSpecialTool = useCallback((tool: string) => {
@@ -132,11 +114,6 @@ const OptionButtons = memo(() => {
       
       {/* Productions showcase */}
       <ProductionShowcase />
-      
-      {/* Copyright notice */}
-      <div className="mt-6 text-center text-white/60 text-xs">
-        <p>© {new Date().getFullYear()} N3O Studios. All rights reserved.</p>
-      </div>
     </div>
   );
 });
