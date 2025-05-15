@@ -7,9 +7,10 @@ import { Send, Paperclip } from 'lucide-react';
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   isLoading: boolean;
+  showWelcome?: boolean;
 }
 
-export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
+export const ChatInput = ({ onSendMessage, isLoading, showWelcome = false }: ChatInputProps) => {
   const [message, setMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,6 +37,11 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
 
   return (
     <div className="flex flex-col gap-2">
+      {showWelcome && (
+        <div className="text-center py-2 text-gray-400 mb-2">
+          <p>Welcome! I'm NS, an AI assistant. How can I help you today?</p>
+        </div>
+      )}
       <div className="flex items-center gap-2">
         <Textarea 
           value={message}

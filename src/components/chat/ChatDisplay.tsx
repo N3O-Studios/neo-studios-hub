@@ -26,7 +26,7 @@ export const ChatDisplay = ({
       <div className="p-4">
         {chatHistory.length === 0 ? (
           <div className="text-center py-6 text-gray-400">
-            <p>Welcome! I'm NS, an AI assistant. How can I help you today?</p>
+            {/* Removed the welcome message from here */}
           </div>
         ) : (
           <>

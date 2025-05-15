@@ -34,6 +34,11 @@ const Index = () => {
           <Email />
         </div>
 
+        {/* Copyright in the center */}
+        <div className="text-xs text-gray-400">
+          © 2025 N3O Studios. All Rights Reserved.
+        </div>
+
         {/* Social media icons on bottom right */}
         <div>
           <SocialIcons />

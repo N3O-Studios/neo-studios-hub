@@ -110,6 +110,7 @@ const OptionButtons = memo(() => {
         <ChatInput 
           onSendMessage={handleSendMessage} 
           isLoading={isLoading} 
+          showWelcome={chatHistory.length === 0}
         />
         
         {/* Tool icons */}

@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { Send } from 'lucide-react';
 
 // Define all available chord types
@@ -29,11 +30,12 @@ type ChordResult = {
 
 const ChordGenerator = () => {
   const [prompt, setPrompt] = useState('');
+  const [barLength, setBarLength] = useState('4');
   const [isGenerating, setIsGenerating] = useState(false);
   const [results, setResults] = useState<ChordResult[]>([]);
 
   const generateChords = async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim() || !barLength) return;
     
     setIsGenerating(true);
     
@@ -57,7 +59,7 @@ const ChordGenerator = () => {
         generatedChords.push({
           name,
           notes,
-          description: `A ${root} ${type} chord that would work well with your request.`
+          description: `A ${root} ${type} chord that would work well with your ${barLength}-bar progression.`
         });
       }
       
@@ -81,6 +83,30 @@ const ChordGenerator = () => {
             or "Dark and atmospheric chords in A minor"
           </p>
           
+          {/* Bar length selection */}
+          <div className="mb-6">
+            <h3 className="text-lg mb-2">Length (required)</h3>
+            <RadioGroup 
+              defaultValue="4" 
+              value={barLength} 
+              onValueChange={setBarLength} 
+              className="flex space-x-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="4" id="r1" />
+                <Label htmlFor="r1" className="text-white">4 Bars</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="8" id="r2" />
+                <Label htmlFor="r2" className="text-white">8 Bars</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="16" id="r3" />
+                <Label htmlFor="r3" className="text-white">16 Bars</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          
           <div className="flex gap-2">
             <Textarea
               value={prompt}
@@ -90,7 +116,7 @@ const ChordGenerator = () => {
             />
             <Button
               onClick={generateChords}
-              disabled={isGenerating || !prompt.trim()}
+              disabled={isGenerating || !prompt.trim() || !barLength}
               className="bg-[#9b87f5] text-white px-4 self-end hover:bg-[#7E69AB]"
             >
               <Send className="h-5 w-5 mr-2" />
@@ -101,7 +127,7 @@ const ChordGenerator = () => {
         
         {results.length > 0 && (
           <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 p-6">
-            <h2 className="text-xl mb-4">Generated Chord Progression</h2>
+            <h2 className="text-xl mb-4">{barLength}-Bar Chord Progression</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {results.map((chord, index) => (
@@ -133,6 +159,11 @@ const ChordGenerator = () => {
               Back to Home
             </Button>
           </Link>
+        </div>
+        
+        {/* Copyright at the bottom */}
+        <div className="text-center text-xs text-gray-400 mt-8">
+          © 2025 N3O Studios. All Rights Reserved.
         </div>
       </div>
     </div>
