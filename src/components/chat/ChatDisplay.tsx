@@ -1,22 +1,66 @@
-import { useEffect } from 'react';
+
+import { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/types/chat';
+
 interface ChatDisplayProps {
   chatHistory: ChatMessage[];
   isLoading: boolean;
 }
+
 export const ChatDisplay = ({
   chatHistory,
   isLoading
 }: ChatDisplayProps) => {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
   // Auto-scroll to the bottom when new messages arrive
   useEffect(() => {
-    const chatContainer = document.getElementById('chat-container');
-    if (chatContainer) {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [chatHistory]);
-  return <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 mb-4">
-      
-    </div>;
+
+  return (
+    <ScrollArea className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 mb-4 h-[350px] overflow-y-auto">
+      <div className="p-4">
+        {chatHistory.length === 0 ? (
+          <div className="text-center py-6 text-gray-400">
+            <p>Welcome! I'm NS, an AI assistant. How can I help you today?</p>
+          </div>
+        ) : (
+          <>
+            {chatHistory.map((message, index) => (
+              <div 
+                key={index} 
+                className={`mb-4 ${message.role === 'user' ? 'text-right' : 'text-left'}`}
+              >
+                <div 
+                  className={`inline-block max-w-[80%] px-4 py-2 rounded-lg ${
+                    message.role === 'user' 
+                      ? 'bg-[#9b87f5] text-white' 
+                      : 'bg-[#2A2A30] text-white'
+                  }`}
+                >
+                  {message.content}
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="text-left mb-4">
+                <div className="inline-block max-w-[80%] px-4 py-2 rounded-lg bg-[#2A2A30] text-white">
+                  <div className="flex gap-2">
+                    <div className="h-2 w-2 bg-[#9b87f5] rounded-full animate-pulse"></div>
+                    <div className="h-2 w-2 bg-[#9b87f5] rounded-full animate-pulse delay-150"></div>
+                    <div className="h-2 w-2 bg-[#9b87f5] rounded-full animate-pulse delay-300"></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+        <div ref={bottomRef} />
+      </div>
+    </ScrollArea>
+  );
 };

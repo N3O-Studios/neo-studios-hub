@@ -12,15 +12,15 @@ const Tools = () => {
           <div className="bg-[#222222] p-6 rounded-lg border border-[#1EAEDB]/40">
             <h2 className="text-xl font-bold mb-4">Chord Generator</h2>
             <p className="mb-4 text-white/90">Generate chord progressions for your music productions.</p>
-            <p className="text-sm text-white/80 mb-4">Coming soon</p>
             
-            <Button 
-              variant="outline" 
-              disabled
-              className="bg-[#1EAEDB] text-white border-white/40 hover:bg-[#1EAEDB]/80 hover:text-white"
-            >
-              Try It
-            </Button>
+            <Link to="/chord-generator">
+              <Button 
+                variant="outline"
+                className="bg-[#1EAEDB] text-white border-white/40 hover:bg-[#1EAEDB]/80 hover:text-white"
+              >
+                Try It
+              </Button>
+            </Link>
           </div>
           
           <div className="bg-[#222222] p-6 rounded-lg border border-[#1EAEDB]/40">

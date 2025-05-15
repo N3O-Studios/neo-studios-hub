@@ -5,6 +5,7 @@ import { ChatInput } from './chat/ChatInput';
 import { ToolButtons } from './chat/ToolButtons';
 import { ProductionShowcase } from './chat/ProductionShowcase';
 import { ChatMessage, GeminiRequest, GeminiResponse } from '@/types/chat';
+import { toast } from '@/components/ui/sonner';
 
 // Use memo for performance optimization
 const OptionButtons = memo(() => {
@@ -40,7 +41,7 @@ const OptionButtons = memo(() => {
       
       // Performance optimization: Use AbortController for timeout
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // Increased timeout to 30 seconds
       
       const response = await fetch(url, {
         method: 'POST',
@@ -65,7 +66,7 @@ const OptionButtons = memo(() => {
       }
       
       // Get the response text
-      const responseText = data.candidates[0]?.content?.parts[0]?.text || 
+      const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 
         "I'm NS, an AI assistant. I apologize, but I couldn't generate a response at this time.";
       
       const assistantMessage: ChatMessage = { 
@@ -76,9 +77,12 @@ const OptionButtons = memo(() => {
       setChatHistory(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      toast.error("Couldn't process your request. Please try again.");
+      
       setChatHistory(prev => [...prev, { 
         role: 'assistant', 
-        content: 'Sorry, I encountered an error processing your request. Please try again later.' 
+        content: "I'm NS, an AI assistant. I apologize, but I couldn't process your request at this time. Please try again in a moment." 
       }]);
     } finally {
       setIsLoading(false);
