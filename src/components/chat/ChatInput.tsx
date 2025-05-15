@@ -36,17 +36,12 @@ export const ChatInput = ({ onSendMessage, isLoading, showWelcome = false }: Cha
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      {showWelcome && (
-        <div className="text-center py-2 text-gray-400 mb-2">
-          <p>Welcome! I'm NS, an AI assistant. How can I help you today?</p>
-        </div>
-      )}
+    <div className="flex flex-col gap-2 border-t border-[#9b87f5]/10 pt-4">
       <div className="flex items-center gap-2">
         <Textarea 
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Ask me anything..."
+          placeholder={showWelcome ? "Welcome! I'm NS, an AI assistant. Ask me anything..." : "Ask me anything..."}
           className="min-h-[60px] bg-[#2A2A30] border-none text-white resize-none focus-visible:ring-[#9b87f5] transition-all duration-300 hover:bg-[#2A2A30]/90"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {

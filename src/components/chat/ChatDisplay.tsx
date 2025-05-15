@@ -22,11 +22,11 @@ export const ChatDisplay = ({
   }, [chatHistory]);
 
   return (
-    <ScrollArea className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 mb-4 h-[350px] overflow-y-auto">
-      <div className="p-4">
+    <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-4">
+      <div className="flex flex-col">
         {chatHistory.length === 0 ? (
-          <div className="text-center py-6 text-gray-400">
-            {/* Removed the welcome message from here */}
+          <div className="text-center py-12 text-gray-400">
+            {/* Empty space for a cleaner look */}
           </div>
         ) : (
           <>

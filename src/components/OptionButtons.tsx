@@ -99,22 +99,25 @@ const OptionButtons = memo(() => {
 
   return (
     <div className="w-full max-w-3xl">
-      {/* Chat display with performance optimization */}
-      <ChatDisplay 
-        chatHistory={chatHistory} 
-        isLoading={isLoading} 
-      />
-      
-      {/* Message input and tools area */}
-      <div className="bg-[#1A1F2C] p-4 rounded-lg border border-[#9b87f5]/30">
-        <ChatInput 
-          onSendMessage={handleSendMessage} 
+      {/* Combined chat interface with increased height */}
+      <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 overflow-hidden">
+        {/* Chat display with performance optimization and increased height */}
+        <ChatDisplay 
+          chatHistory={chatHistory} 
           isLoading={isLoading} 
-          showWelcome={chatHistory.length === 0}
         />
         
-        {/* Tool icons */}
-        <ToolButtons onSelectTool={handleSpecialTool} />
+        {/* Message input and tools area */}
+        <div className="p-4">
+          <ChatInput 
+            onSendMessage={handleSendMessage} 
+            isLoading={isLoading} 
+            showWelcome={chatHistory.length === 0}
+          />
+          
+          {/* Tool icons */}
+          <ToolButtons onSelectTool={handleSpecialTool} />
+        </div>
       </div>
       
       {/* Productions showcase */}

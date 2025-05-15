@@ -28,7 +28,7 @@ const Index = () => {
       </div>
 
       {/* Footer */}
-      <div className={`w-full p-6 flex justify-between items-end transition-opacity duration-1000 delay-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`w-full p-6 flex justify-between items-center transition-opacity duration-1000 delay-500 ${isLoaded ? 'opacity-100' : 'opacity-0'} mt-auto`}>
         {/* Email on bottom left */}
         <div>
           <Email />
