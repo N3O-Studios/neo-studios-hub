@@ -16,12 +16,13 @@ export interface GeminiRequest {
 
 // Add a type for Gemini API response
 export interface GeminiResponse {
-  candidates: {
+  candidates?: {
     content: {
       parts: {
         text: string;
       }[];
     };
+    finishReason?: string;
   }[];
   promptFeedback?: {
     blockReason?: string;
