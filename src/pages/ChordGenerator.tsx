@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Send } from 'lucide-react';
+import { Send, ArrowRight } from 'lucide-react';
 
 // Define all available chord types
 const chordTypes = [
@@ -22,48 +22,149 @@ const rootNotes = [
   'Ab', 'A', 'A#', 'Bb', 'B'
 ];
 
-type ChordResult = {
+type Chord = {
   name: string;
   notes: string[];
   description?: string;
+};
+
+type ChordProgression = {
+  chords: Chord[];
+  description: string;
 };
 
 const ChordGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [barLength, setBarLength] = useState('4');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [results, setResults] = useState<ChordResult[]>([]);
+  const [progressions, setProgressions] = useState<ChordProgression[]>([]);
 
-  const generateChords = async () => {
+  const generateChordProgressions = async () => {
     if (!prompt.trim() || !barLength) return;
     
     setIsGenerating(true);
     
-    // Simulated chord generation (in a real app, this would call an API)
     try {
-      // For demo purposes, we'll generate some random chords
-      const numberOfChords = Math.floor(Math.random() * 5) + 2; // 2-6 chords
-      const generatedChords: ChordResult[] = [];
+      // For demo purposes, we'll generate 5 random chord progressions
+      const generatedProgressions: ChordProgression[] = [];
       
-      for (let i = 0; i < numberOfChords; i++) {
-        const randomRootIndex = Math.floor(Math.random() * rootNotes.length);
-        const randomChordTypeIndex = Math.floor(Math.random() * chordTypes.length);
+      for (let i = 0; i < 5; i++) {
+        const numChords = parseInt(barLength);
+        const chords: Chord[] = [];
         
-        const root = rootNotes[randomRootIndex];
-        const type = chordTypes[randomChordTypeIndex];
-        const name = `${root}${type}`;
+        // Generate emotion-based chord progression
+        // This is simplified logic - in a real app, you'd use music theory rules
+        // to create progressions that match the emotional tone
         
-        // Simulate chord notes (this would be calculated properly in a real app)
-        const notes = [`${root}`, 'Some note', 'Another note'];
+        let startingChord;
+        let isMinor = false;
         
-        generatedChords.push({
-          name,
-          notes,
-          description: `A ${root} ${type} chord that would work well with your ${barLength}-bar progression.`
+        // Determine mood from prompt
+        const lowerPrompt = prompt.toLowerCase();
+        if (lowerPrompt.includes('sad') || lowerPrompt.includes('melancholy') || 
+            lowerPrompt.includes('dark') || lowerPrompt.includes('emotional')) {
+          isMinor = true;
+          startingChord = 'A';
+        } else if (lowerPrompt.includes('happy') || lowerPrompt.includes('upbeat') || 
+                  lowerPrompt.includes('bright') || lowerPrompt.includes('joyful')) {
+          isMinor = false;
+          startingChord = 'C';
+        } else {
+          // Random starter
+          startingChord = rootNotes[Math.floor(Math.random() * 7)]; // More common keys
+          isMinor = Math.random() > 0.5;
+        }
+        
+        // Create first chord in progression
+        chords.push({
+          name: `${startingChord}${isMinor ? 'minor' : 'major'}`,
+          notes: [`${startingChord}`, isMinor ? `${startingChord}m` : startingChord, isMinor ? 'E' : 'E'],
+        });
+        
+        // Common chord progressions for different moods
+        let progression: string[];
+        if (isMinor) {
+          // Minor progressions
+          const minorProgressions = [
+            ['i', 'VI', 'VII', 'i'],  // Am-F-G-Am
+            ['i', 'iv', 'VII', 'III'], // Am-Dm-G-C
+            ['i', 'VII', 'VI', 'VII'], // Am-G-F-G
+            ['i', 'iv', 'v', 'i'],    // Am-Dm-Em-Am
+          ];
+          progression = minorProgressions[i % minorProgressions.length];
+        } else {
+          // Major progressions
+          const majorProgressions = [
+            ['I', 'V', 'vi', 'IV'],   // C-G-Am-F
+            ['I', 'IV', 'V', 'I'],    // C-F-G-C
+            ['I', 'vi', 'IV', 'V'],   // C-Am-F-G
+            ['I', 'V', 'vi', 'iii'],  // C-G-Am-Em
+          ];
+          progression = majorProgressions[i % majorProgressions.length];
+        }
+        
+        // Map roman numerals to actual chords (simplified)
+        const rootIndex = rootNotes.findIndex(note => note === startingChord);
+        for (let j = 1; j < numChords; j++) {
+          const romanNumeral = progression[j % progression.length];
+          
+          let chordType = 'major';
+          let chordRoot;
+          
+          if (romanNumeral.toLowerCase() === romanNumeral) {
+            // Lowercase numeral = minor chord
+            chordType = 'minor';
+          }
+          
+          // Very simplified chord progression building
+          // In a real app, this would be more sophisticated
+          switch (romanNumeral.toUpperCase()) {
+            case 'I': 
+              chordRoot = rootNotes[rootIndex]; 
+              break;
+            case 'II': 
+              chordRoot = rootNotes[(rootIndex + 2) % rootNotes.length]; 
+              break;
+            case 'III': 
+              chordRoot = rootNotes[(rootIndex + 4) % rootNotes.length]; 
+              break;
+            case 'IV': 
+              chordRoot = rootNotes[(rootIndex + 5) % rootNotes.length]; 
+              break;
+            case 'V': 
+              chordRoot = rootNotes[(rootIndex + 7) % rootNotes.length]; 
+              break;
+            case 'VI': 
+              chordRoot = rootNotes[(rootIndex + 9) % rootNotes.length]; 
+              break;
+            case 'VII': 
+              chordRoot = rootNotes[(rootIndex + 11) % rootNotes.length]; 
+              break;
+            default: 
+              chordRoot = rootNotes[rootIndex];
+          }
+          
+          chords.push({
+            name: `${chordRoot}${chordType}`,
+            notes: [`${chordRoot}`, chordType === 'minor' ? `${chordRoot}m` : chordRoot],
+          });
+        }
+        
+        // Generate a description based on the progression
+        let description;
+        if (isMinor) {
+          description = `${i + 1}. A ${barLength}-bar ${lowerPrompt.includes('sad') ? 'melancholic' : 'atmospheric'} progression in ${startingChord} minor`;
+        } else {
+          description = `${i + 1}. A ${barLength}-bar ${lowerPrompt.includes('happy') ? 'uplifting' : 'powerful'} progression in ${startingChord} major`;
+        }
+        
+        generatedProgressions.push({
+          chords,
+          description
         });
       }
       
-      setResults(generatedChords);
+      setProgressions(generatedProgressions);
     } catch (error) {
       console.error('Error generating chords:', error);
     } finally {
@@ -115,7 +216,7 @@ const ChordGenerator = () => {
               className="min-h-[100px] bg-[#2A2A30] border-none text-white resize-none focus-visible:ring-[#9b87f5]"
             />
             <Button
-              onClick={generateChords}
+              onClick={generateChordProgressions}
               disabled={isGenerating || !prompt.trim() || !barLength}
               className="bg-[#9b87f5] text-white px-4 self-end hover:bg-[#7E69AB]"
             >
@@ -125,26 +226,38 @@ const ChordGenerator = () => {
           </div>
         </div>
         
-        {results.length > 0 && (
+        {progressions.length > 0 && (
           <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 p-6">
-            <h2 className="text-xl mb-4">{barLength}-Bar Chord Progression</h2>
+            <h2 className="text-xl mb-4">Generated Chord Progressions</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {results.map((chord, index) => (
+            <div className="space-y-6">
+              {progressions.map((progression, index) => (
                 <div 
                   key={index}
                   className="bg-[#2A2A30] p-4 rounded-lg border border-[#9b87f5]/20 hover:border-[#9b87f5]/40 transition-all"
                 >
-                  <h3 className="text-lg font-bold text-[#9b87f5] mb-2">{chord.name}</h3>
-                  <p className="text-sm text-gray-400 mb-2">{chord.description}</p>
-                  <div className="flex gap-2">
-                    {chord.notes.map((note, i) => (
-                      <span 
-                        key={i}
-                        className="bg-[#1A1F2C] px-2 py-1 rounded-md text-sm"
-                      >
-                        {note}
-                      </span>
+                  <h3 className="text-lg font-bold text-[#9b87f5] mb-3">{progression.description}</h3>
+                  
+                  <div className="flex items-center flex-wrap gap-y-4">
+                    {progression.chords.map((chord, chordIndex) => (
+                      <div key={chordIndex} className="flex items-center">
+                        <div className="bg-[#1A1F2C] px-4 py-3 rounded-md flex flex-col items-center min-w-[80px]">
+                          <span className="text-lg font-bold text-[#9b87f5]">{chord.name}</span>
+                          <div className="flex gap-1 mt-1">
+                            {chord.notes.map((note, noteIndex) => (
+                              <span 
+                                key={noteIndex}
+                                className="bg-[#2A2A30] px-2 py-0.5 rounded-md text-xs"
+                              >
+                                {note}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        {chordIndex < progression.chords.length - 1 && (
+                          <ArrowRight className="mx-2 text-[#9b87f5]" />
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>

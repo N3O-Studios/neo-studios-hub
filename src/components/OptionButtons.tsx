@@ -6,11 +6,13 @@ import { ToolButtons } from './chat/ToolButtons';
 import { ProductionShowcase } from './chat/ProductionShowcase';
 import { ChatMessage, GeminiRequest, GeminiResponse } from '@/types/chat';
 import { toast } from '@/components/ui/sonner';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 // Use memo for performance optimization
 const OptionButtons = memo(() => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const supabase = useSupabaseClient();
   
   // Memoize the send message handler for performance
   const handleSendMessage = useCallback(async (message: string) => {
@@ -20,8 +22,41 @@ const OptionButtons = memo(() => {
     setIsLoading(true);
     
     try {
-      // Use the Gemini API instead of OpenRouter
-      const apiKey = process.env.N3O_GEMINI_API || 'AIzaSyCf8m_bO5S4fIvYlnDlhbZrYlNEIQ7b5I0';
+      // Use Supabase Edge Function to process the message
+      const { data, error } = await supabase.functions.invoke('process-chat', {
+        body: { message }
+      });
+      
+      if (error) {
+        throw new Error(`Edge function error: ${error.message}`);
+      }
+      
+      // If we have a valid response
+      if (data && data.response) {
+        const assistantMessage: ChatMessage = { 
+          role: 'assistant', 
+          content: data.response
+        };
+        
+        setChatHistory(prev => [...prev, assistantMessage]);
+      } else {
+        // Fallback to direct API call if edge function doesn't provide proper response
+        await processDirectApiCall(message);
+      }
+    } catch (error) {
+      console.error('Error with Supabase edge function:', error);
+      
+      // Try direct API call as fallback
+      await processDirectApiCall(message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [supabase]);
+  
+  // Direct API call as a fallback
+  const processDirectApiCall = async (message: string) => {
+    try {
+      const apiKey = 'AIzaSyCf8m_bO5S4fIvYlnDlhbZrYlNEIQ7b5I0'; // Fallback API key
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
       
       const payload: GeminiRequest = {
@@ -39,9 +74,8 @@ const OptionButtons = memo(() => {
         ]
       };
       
-      // Performance optimization: Use AbortController for timeout
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // Increased timeout to 30 seconds
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
       
       const response = await fetch(url, {
         method: 'POST',
@@ -60,12 +94,10 @@ const OptionButtons = memo(() => {
       
       const data = await response.json() as GeminiResponse;
       
-      // Check if the response was blocked
       if (data.promptFeedback?.blockReason) {
         throw new Error(`Response blocked: ${data.promptFeedback.blockReason}`);
       }
       
-      // Get the response text
       const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 
         "I'm NS, an AI assistant. I apologize, but I couldn't generate a response at this time.";
       
@@ -76,7 +108,7 @@ const OptionButtons = memo(() => {
       
       setChatHistory(prev => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Direct API error:', error);
       
       toast.error("Couldn't process your request. Please try again.");
       
@@ -84,10 +116,8 @@ const OptionButtons = memo(() => {
         role: 'assistant', 
         content: "I'm NS, an AI assistant. I apologize, but I couldn't process your request at this time. Please try again in a moment." 
       }]);
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+  };
 
   // Memoize the tool handler for performance
   const handleSpecialTool = useCallback((tool: string) => {
