@@ -6,20 +6,22 @@ import { ChatMessage } from '@/types/chat';
 interface ChatDisplayProps {
   chatHistory: ChatMessage[];
   isLoading: boolean;
+  disableAutoScroll?: boolean;
 }
 
 export const ChatDisplay = ({
   chatHistory,
-  isLoading
+  isLoading,
+  disableAutoScroll = false
 }: ChatDisplayProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to the bottom when new messages arrive
+  // Auto-scroll to the bottom when new messages arrive (if not disabled)
   useEffect(() => {
-    if (bottomRef.current) {
+    if (!disableAutoScroll && bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [chatHistory]);
+  }, [chatHistory, disableAutoScroll]);
 
   return (
     <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-4">
