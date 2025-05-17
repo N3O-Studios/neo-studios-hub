@@ -32,6 +32,25 @@ serve(async (req) => {
       parts: [{ text: msg.content }]
     }));
 
+    // Create system prompt with enhanced capabilities
+    const systemPrompt = `${aiIdentity} 
+You can use markdown formatting:
+- **bold text** for emphasis
+- *italic text* for emphasis
+- # Headers of different levels
+- Mathematical expressions using LaTeX notation like $E=mc^2$
+- Code blocks with \`\`\`language\ncode\n\`\`\`
+- Lists and tables
+Please format your responses appropriately.`;
+
+    // Add system message to the beginning if there's no history
+    if (formattedHistory.length === 0) {
+      formattedHistory.push({
+        role: "model",
+        parts: [{ text: systemPrompt }]
+      });
+    }
+
     // Call the Gemini API with the correct endpoint
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
