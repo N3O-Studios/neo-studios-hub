@@ -25,12 +25,17 @@ const OptionButtons = memo(() => {
       const { data, error } = await supabase.functions.invoke('chat-with-gemini', {
         body: { 
           message,
-          chatHistory
+          chatHistory: chatHistory.slice(-10) // Only send the last 10 messages to avoid token limits
         }
       });
       
       if (error) {
-        throw new Error(error.message);
+        console.error('Edge function error:', error);
+        setChatHistory(prev => [...prev, { 
+          role: 'assistant', 
+          content: "Error" 
+        }]);
+        return;
       }
       
       // Add the assistant's response to chat history
@@ -41,7 +46,6 @@ const OptionButtons = memo(() => {
       
     } catch (error) {
       console.error('Error processing message:', error);
-      toast.error("Couldn't process your request. Please try again.");
       setChatHistory(prev => [...prev, { 
         role: 'assistant', 
         content: "Error" 
@@ -66,8 +70,8 @@ const OptionButtons = memo(() => {
         {/* Chat display with performance optimisation and increased height */}
         <ChatDisplay 
           chatHistory={chatHistory} 
-          isLoading={isLoading} 
-          disableAutoScroll={true}
+          isLoading={isLoading}
+          disableAutoScroll={false}
         />
         
         {/* Message input and tools area */}

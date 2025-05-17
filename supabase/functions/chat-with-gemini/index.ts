@@ -1,6 +1,5 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -33,25 +32,22 @@ serve(async (req) => {
       parts: [{ text: msg.content }]
     }));
 
-    // Add the current message
-    const contents = [
-      ...formattedHistory,
-      {
-        role: 'user',
-        parts: [{ text: message }]
-      }
-    ];
-
-    // Call the Gemini API
+    // Call the Gemini API with the correct endpoint
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents,
+          contents: [
+            ...formattedHistory,
+            {
+              role: 'user',
+              parts: [{ text: message }]
+            }
+          ],
           generationConfig: {
             temperature: 0.7,
             topK: 40,
@@ -86,8 +82,8 @@ serve(async (req) => {
     if (data.error) {
       console.error('Gemini API error:', data.error);
       return new Response(
-        JSON.stringify({ error: "Error processing your request" }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
+        JSON.stringify({ response: "Error" }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
       );
     }
 
@@ -109,8 +105,8 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in chat-with-gemini function:', error);
     return new Response(
-      JSON.stringify({ error: "Error" }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
+      JSON.stringify({ response: "Error" }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
     );
   }
 });
