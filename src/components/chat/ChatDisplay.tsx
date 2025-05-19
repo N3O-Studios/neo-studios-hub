@@ -6,9 +6,9 @@ import ReactMarkdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
+import 'katex/dist/katex.min.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import 'katex/dist/katex.min.css';
 
 interface ChatDisplayProps {
   chatHistory: ChatMessage[];
@@ -65,9 +65,12 @@ export const ChatDisplay = ({
                         rehypePlugins={[rehypeKatex]}
                         className="markdown-content"
                         components={{
-                          code({node, inline, className, children, ...props}) {
+                          code({node, className, children, ...props}) {
                             const match = /language-(\w+)/.exec(className || '');
-                            return !inline ? (
+                            // Check if it's an inline code block by examining the node position
+                            const isInline = !node || !('position' in node);
+                            
+                            return !isInline ? (
                               <SyntaxHighlighter
                                 style={vscDarkPlus}
                                 language={match?.[1] || ''}
