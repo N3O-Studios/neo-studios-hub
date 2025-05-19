@@ -12,7 +12,6 @@ import { supabase } from '@/integrations/supabase/client';
 const OptionButtons = memo(() => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [autoScroll, setAutoScroll] = useState(true);
   
   // Memoize the send message handler for performance
   const handleSendMessage = useCallback(async (message: string) => {
@@ -26,7 +25,8 @@ const OptionButtons = memo(() => {
       const { data, error } = await supabase.functions.invoke('chat-with-gemini', {
         body: { 
           message,
-          chatHistory: chatHistory.slice(-10) // Only send the last 10 messages to avoid token limits
+          chatHistory: chatHistory.slice(-10), // Only send the last 10 messages to avoid token limits
+          useCustomIdentity: true // Flag to use cb_ident
         }
       });
       
@@ -64,31 +64,15 @@ const OptionButtons = memo(() => {
     }]);
   }, []);
 
-  // Toggle auto-scroll feature
-  const toggleAutoScroll = useCallback(() => {
-    setAutoScroll(prev => !prev);
-  }, []);
-
   return (
     <div className="w-full max-w-3xl">
       {/* Combined chat interface with increased height */}
       <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 overflow-hidden">
         {/* Chat display with performance optimisation and increased height */}
-        <div className="flex justify-end p-2 bg-[#232836] border-b border-[#9b87f5]/20">
-          <button 
-            onClick={toggleAutoScroll} 
-            className={`text-xs px-2 py-1 rounded ${
-              autoScroll ? 'bg-[#9b87f5]/70 text-white' : 'bg-[#2A2A30] text-gray-300'
-            }`}
-          >
-            {autoScroll ? 'Auto-scroll: ON' : 'Auto-scroll: OFF'}
-          </button>
-        </div>
-        
         <ChatDisplay 
           chatHistory={chatHistory} 
           isLoading={isLoading}
-          disableAutoScroll={!autoScroll}
+          disableAutoScroll={false}
         />
         
         {/* Message input and tools area */}

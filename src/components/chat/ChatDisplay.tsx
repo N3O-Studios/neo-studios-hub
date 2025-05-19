@@ -6,9 +6,9 @@ import ReactMarkdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
-import 'katex/dist/katex.min.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import 'katex/dist/katex.min.css';
 
 interface ChatDisplayProps {
   chatHistory: ChatMessage[];
@@ -31,74 +31,81 @@ export const ChatDisplay = ({
   }, [chatHistory, disableAutoScroll]);
 
   return (
-    <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-4">
-      <div className="flex flex-col">
-        {chatHistory.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
-            {/* Empty space for a cleaner look */}
-          </div>
-        ) : (
-          <>
-            {chatHistory.map((message, index) => (
-              <div 
-                key={index} 
-                className={`mb-4 ${message.role === 'user' ? 'text-right' : 'text-left'}`}
-              >
+    <div className="relative">
+      {/* Disclaimer text in top right */}
+      <div className="absolute top-2 right-4 text-xs text-gray-400 italic z-10">
+        *NS can make mistakes, double check important information
+      </div>
+      
+      <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-4">
+        <div className="flex flex-col">
+          {chatHistory.length === 0 ? (
+            <div className="text-center py-12 text-gray-400">
+              {/* Empty space for a cleaner look */}
+            </div>
+          ) : (
+            <>
+              {chatHistory.map((message, index) => (
                 <div 
-                  className={`inline-block max-w-[80%] px-4 py-2 rounded-lg ${
-                    message.role === 'user' 
-                      ? 'bg-[#9b87f5] text-white' 
-                      : 'bg-[#2A2A30] text-white'
-                  }`}
+                  key={index} 
+                  className={`mb-4 ${message.role === 'user' ? 'text-right' : 'text-left'}`}
                 >
-                  {message.role === 'user' ? (
-                    message.content
-                  ) : (
-                    <ReactMarkdown 
-                      remarkPlugins={[remarkGfm, remarkMath]}
-                      rehypePlugins={[rehypeKatex]}
-                      className="markdown-content"
-                      components={{
-                        code({className, children, ...props}) {
-                          const match = /language-(\w+)/.exec(className || '');
-                          return !props.node?.position ? (
-                            <SyntaxHighlighter
-                              style={vscDarkPlus}
-                              language={match?.[1] || ''}
-                              PreTag="div"
-                              {...props}
-                            >
-                              {String(children).replace(/\n$/, '')}
-                            </SyntaxHighlighter>
-                          ) : (
-                            <code className={className} {...props}>
-                              {children}
-                            </code>
-                          );
-                        }
-                      }}
-                    >
-                      {message.content}
-                    </ReactMarkdown>
-                  )}
-                </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="text-left mb-4">
-                <div className="inline-block max-w-[80%] px-4 py-2 rounded-lg bg-[#2A2A30] text-white">
-                  <div className="flex gap-2">
-                    <div className="h-2 w-2 bg-[#9b87f5] rounded-full animate-pulse"></div>
-                    <div className="h-2 w-2 bg-[#9b87f5] rounded-full animate-pulse delay-150"></div>
-                    <div className="h-2 w-2 bg-[#9b87f5] rounded-full animate-pulse delay-300"></div>
+                  <div 
+                    className={`inline-block max-w-[80%] px-4 py-2 rounded-lg ${
+                      message.role === 'user' 
+                        ? 'bg-[#9b87f5] text-white' 
+                        : 'bg-[#2A2A30] text-white'
+                    }`}
+                  >
+                    {message.role === 'user' ? (
+                      message.content
+                    ) : (
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm, remarkMath]}
+                        rehypePlugins={[rehypeKatex]}
+                        className="markdown-content"
+                        components={{
+                          code({node, inline, className, children, ...props}) {
+                            const match = /language-(\w+)/.exec(className || '');
+                            return !inline ? (
+                              <SyntaxHighlighter
+                                style={vscDarkPlus}
+                                language={match?.[1] || ''}
+                                PreTag="div"
+                                {...props}
+                              >
+                                {String(children).replace(/\n$/, '')}
+                              </SyntaxHighlighter>
+                            ) : (
+                              <code className={className} {...props}>
+                                {children}
+                              </code>
+                            );
+                          }
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    )}
                   </div>
                 </div>
-              </div>
-            )}
-          </>
-        )}
-        <div ref={bottomRef} />
-      </div>
-    </ScrollArea>
+              ))}
+              {isLoading && (
+                <div className="text-left mb-4">
+                  <div className="inline-block max-w-[80%] px-4 py-2 rounded-lg bg-[#2A2A30] text-white">
+                    <div className="flex gap-2">
+                      <div className="h-2 w-2 bg-[#9b87f5] rounded-full animate-pulse"></div>
+                      <div className="h-2 w-2 bg-[#9b87f5] rounded-full animate-pulse delay-150"></div>
+                      <div className="h-2 w-2 bg-[#9b87f5] rounded-full animate-pulse delay-300"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+          <div ref={bottomRef} />
+        </div>
+      </ScrollArea>
+    </div>
   );
 };

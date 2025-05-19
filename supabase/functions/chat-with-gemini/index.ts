@@ -14,7 +14,7 @@ serve(async (req) => {
 
   try {
     const geminiApiKey = Deno.env.get('gemini_api_key');
-    const aiIdentity = Deno.env.get('ai_identity') || 'I\'m NS, an AI assistant.';
+    const customIdentity = Deno.env.get('cb_ident') || 'I\'m NS, an AI assistant.';
     
     if (!geminiApiKey) {
       return new Response(
@@ -24,7 +24,7 @@ serve(async (req) => {
     }
 
     // Get the request body
-    const { message, chatHistory } = await req.json();
+    const { message, chatHistory, useCustomIdentity } = await req.json();
     
     // Format previous messages for the Gemini API
     const formattedHistory = chatHistory.map(msg => ({
@@ -32,8 +32,8 @@ serve(async (req) => {
       parts: [{ text: msg.content }]
     }));
 
-    // Create system prompt with enhanced capabilities
-    const systemPrompt = `${aiIdentity} 
+    // Create system prompt with enhanced capabilities including advanced math
+    const systemPrompt = `${customIdentity} 
 You can use markdown formatting:
 - **bold text** for emphasis
 - *italic text* for emphasis
@@ -41,7 +41,17 @@ You can use markdown formatting:
 - Mathematical expressions using LaTeX notation like $E=mc^2$
 - Code blocks with \`\`\`language\ncode\n\`\`\`
 - Lists and tables
-Please format your responses appropriately.`;
+
+For mathematical equations, please use LaTeX notation within $ for inline equations or $$ for block equations. 
+Examples:
+- Simple equations: $x^2 + 2x + 1 = 0$
+- Complex integrals: $$\\int_{0}^{\\infty} e^{-x} dx = 1$$
+- Matrices: $$\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}$$
+- Fractions: $\\frac{1}{2} + \\frac{1}{3} = \\frac{5}{6}$
+- Greek symbols: $\\alpha, \\beta, \\gamma, \\Delta, \\sum_{i=0}^{n}$
+- Limits: $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1$
+
+Please render mathematical equations properly and format your responses appropriately.`;
 
     // Add system message to the beginning if there's no history
     if (formattedHistory.length === 0) {
