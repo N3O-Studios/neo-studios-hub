@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/types/chat';
 import ReactMarkdown from 'react-markdown';
@@ -19,16 +19,8 @@ interface ChatDisplayProps {
 export const ChatDisplay = ({
   chatHistory,
   isLoading,
-  disableAutoScroll = false
 }: ChatDisplayProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll to the bottom when new messages arrive (if not disabled)
-  useEffect(() => {
-    if (!disableAutoScroll && bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [chatHistory, disableAutoScroll]);
 
   return (
     <div className="relative">

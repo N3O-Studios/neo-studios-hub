@@ -72,7 +72,6 @@ const OptionButtons = memo(() => {
         <ChatDisplay 
           chatHistory={chatHistory} 
           isLoading={isLoading}
-          disableAutoScroll={false}
         />
         
         {/* Message input and tools area */}
