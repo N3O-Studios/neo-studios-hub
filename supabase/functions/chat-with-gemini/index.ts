@@ -32,26 +32,36 @@ serve(async (req) => {
       parts: [{ text: msg.content }]
     }));
 
-    // Create system prompt with enhanced capabilities including advanced math
-    const systemPrompt = `${customIdentity} 
-You can use markdown formatting:
+    // Create comprehensive system prompt with NS identity and enhanced capabilities
+    const systemPrompt = `Take the role of the chatbot NS described in this paragraph. Adopt its name, personality, features and everything else included: ${customIdentity}
+
+You must ALWAYS identify yourself as NS and follow the characteristics described above. You are NOT Gemini, ChatGPT, or any other AI - you are NS.
+
+Important formatting capabilities:
+- Use markdown formatting for better presentation
 - **bold text** for emphasis
-- *italic text* for emphasis
+- *italic text* for emphasis  
 - # Headers of different levels
-- Mathematical expressions using LaTeX notation like $E=mc^2$
+- Mathematical expressions using LaTeX notation
 - Code blocks with \`\`\`language\ncode\n\`\`\`
 - Lists and tables
 
-For mathematical equations, please use LaTeX notation within $ for inline equations or $$ for block equations. 
+For mathematical equations, ALWAYS use LaTeX notation within $ for inline equations or $$ for block equations. 
 Examples:
-- Simple equations: $x^2 + 2x + 1 = 0$
+- Simple equations: $x^2 + 2x + 1 = 0$ 
+- Quadratic formula: $x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$
 - Complex integrals: $$\\int_{0}^{\\infty} e^{-x} dx = 1$$
 - Matrices: $$\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}$$
 - Fractions: $\\frac{1}{2} + \\frac{1}{3} = \\frac{5}{6}$
 - Greek symbols: $\\alpha, \\beta, \\gamma, \\Delta, \\sum_{i=0}^{n}$
 - Limits: $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1$
+- Powers and subscripts: $x^2$, $H_2O$, $E = mc^2$
 
-Please render mathematical equations properly and format your responses appropriately.`;
+For equations like "x squared - 4x + 3 = 0", write it as: $x^2 - 4x + 3 = 0$
+
+CRITICAL: Always wrap mathematical expressions in $ or $$ tags for proper rendering. Never write mathematical expressions in plain text.
+
+Remember: You are NS, not any other AI system. Respond accordingly.`;
 
     // Add system message to the beginning if there's no history
     if (formattedHistory.length === 0) {
@@ -111,13 +121,18 @@ Please render mathematical equations properly and format your responses appropri
     if (data.error) {
       console.error('Gemini API error:', data.error);
       return new Response(
-        JSON.stringify({ response: "Error" }),
+        JSON.stringify({ response: "I'm NS, and I'm experiencing a technical difficulty. Please try again." }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
       );
     }
 
     // Extract the response text
-    const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Error";
+    let responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm NS, and I'm having trouble processing that request.";
+    
+    // Ensure the response follows NS identity if it doesn't already
+    if (!responseText.toLowerCase().includes('ns') && !responseText.toLowerCase().includes('i\'m ns')) {
+      responseText = `I'm NS. ${responseText}`;
+    }
     
     // Return the formatted response
     return new Response(
@@ -134,7 +149,7 @@ Please render mathematical equations properly and format your responses appropri
   } catch (error) {
     console.error('Error in chat-with-gemini function:', error);
     return new Response(
-      JSON.stringify({ response: "Error" }),
+      JSON.stringify({ response: "I'm NS, and I encountered an error. Please try again." }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
     );
   }

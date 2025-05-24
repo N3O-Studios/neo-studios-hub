@@ -19,11 +19,11 @@ interface ChatDisplayProps {
 export const ChatDisplay = ({
   chatHistory,
   isLoading,
-  disableAutoScroll = false
+  disableAutoScroll = true // Default to disabled
 }: ChatDisplayProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to the bottom when new messages arrive (if not disabled)
+  // Only auto-scroll if explicitly enabled (which it won't be by default)
   useEffect(() => {
     if (!disableAutoScroll && bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -32,12 +32,12 @@ export const ChatDisplay = ({
 
   return (
     <div className="relative">
-      {/* Disclaimer text in top right */}
-      <div className="absolute top-2 right-4 text-xs text-gray-400 italic z-10">
+      {/* Disclaimer text in top right with better positioning */}
+      <div className="absolute top-4 right-4 text-xs text-gray-400 italic z-10 bg-[#1A1F2C]/80 px-2 py-1 rounded">
         *NS can make mistakes, double check important information
       </div>
       
-      <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-4">
+      <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-12">
         <div className="flex flex-col">
           {chatHistory.length === 0 ? (
             <div className="text-center py-12 text-gray-400">
@@ -67,10 +67,10 @@ export const ChatDisplay = ({
                         components={{
                           code({node, className, children, ...props}) {
                             const match = /language-(\w+)/.exec(className || '');
-                            // Check if it's an inline code block by examining the node position
-                            const isInline = !node || !('position' in node);
+                            // Check if it's a code block (has newlines) vs inline code
+                            const isCodeBlock = String(children).includes('\n');
                             
-                            return !isInline ? (
+                            return isCodeBlock ? (
                               <SyntaxHighlighter
                                 style={vscDarkPlus}
                                 language={match?.[1] || ''}
@@ -80,7 +80,7 @@ export const ChatDisplay = ({
                                 {String(children).replace(/\n$/, '')}
                               </SyntaxHighlighter>
                             ) : (
-                              <code className={className} {...props}>
+                              <code className={`${className} bg-[#1A1F2C] px-1 py-0.5 rounded text-[#9b87f5]`} {...props}>
                                 {children}
                               </code>
                             );

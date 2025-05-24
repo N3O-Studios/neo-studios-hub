@@ -68,11 +68,11 @@ const OptionButtons = memo(() => {
     <div className="w-full max-w-3xl">
       {/* Combined chat interface with increased height */}
       <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 overflow-hidden">
-        {/* Chat display with performance optimisation and increased height */}
+        {/* Chat display with auto-scroll disabled */}
         <ChatDisplay 
           chatHistory={chatHistory} 
           isLoading={isLoading}
-          disableAutoScroll={false}
+          disableAutoScroll={true}
         />
         
         {/* Message input and tools area */}
