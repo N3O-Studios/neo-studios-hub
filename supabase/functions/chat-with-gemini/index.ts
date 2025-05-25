@@ -6,6 +6,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Maintenance state management
+let maintenanceState = {
+  isShutdown: false,
+  shutdownTime: null as Date | null
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -26,6 +32,77 @@ serve(async (req) => {
     // Get the request body
     const { message, chatHistory, useCustomIdentity } = await req.json();
     
+    // Check for contingency orders
+    if (message.trim() === '$$executeo1dev') {
+      maintenanceState.isShutdown = true;
+      maintenanceState.shutdownTime = new Date();
+      console.log('Contingency Order 1 executed: System shutdown initiated');
+      return new Response(
+        JSON.stringify({ 
+          response: "NS has entered maintenance mode. All services have been suspended. System status: OFFLINE."
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
+      );
+    }
+
+    if (message.trim() === '$$executeo2dev') {
+      if (maintenanceState.isShutdown) {
+        maintenanceState.isShutdown = false;
+        maintenanceState.shutdownTime = null;
+        console.log('Contingency Order 2 executed: System restored from maintenance');
+        return new Response(
+          JSON.stringify({ 
+            response: "NS has been restored from maintenance mode. All systems are now operational. Welcome back!"
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
+        );
+      } else {
+        return new Response(
+          JSON.stringify({ 
+            response: "Order 2 can only be executed after Order 1 has been activated."
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
+        );
+      }
+    }
+
+    // Check if system is in shutdown state
+    if (maintenanceState.isShutdown) {
+      return new Response(
+        JSON.stringify({ 
+          response: "NS is currently in maintenance mode. Please try again later or use $$executeo2dev to restore services."
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
+      );
+    }
+
+    // Terms of Service check
+    const tosKeywords = ['terms', 'tos', 'terms of service', 'legal', 'privacy policy'];
+    if (tosKeywords.some(keyword => message.toLowerCase().includes(keyword))) {
+      const tosResponse = `**Terms of Service (Effective May 25, 2025)**
+
+By accessing or using NS, an autonomous artificial intelligence chatbot developed by an independent programmer and hosted on secure servers in Germany, you irrevocably agree to be bound by these Terms of Service, which govern your interaction with NS and ensure compliance with applicable laws and regulations worldwide, including GDPR, CCPA, CPRA, India's DPDP Act (2023), PIPEDA, Australian Privacy Act 1988, and Brazilian LGPD.
+
+**Key Points:**
+- NS employs UK English by default but adapts to user input
+- Minimum age: 13 years (16 under GDPR for EU residents)
+- Zero-tolerance policy for discriminatory or abusive behaviour
+- Data collection limited to chat text, anonymised analytics, and user preferences
+- TLS 1.3 encryption in transit, AES-256 encryption at rest
+- German servers ensure EU data residency compliance
+- Liability limited to direct damages not exceeding €100
+- WCAG 2.1 accessibility compliance
+
+For data deletion, use "NS, delete my data" or visit our data management portal.
+
+**Contact:** Use "NS, assist me" for support inquiries.`;
+
+      return new Response(
+        JSON.stringify({ response: tosResponse }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
+      );
+    }
+
     // Format previous messages for the Gemini API
     const formattedHistory = chatHistory.map(msg => ({
       role: msg.role === 'user' ? 'user' : 'model',
