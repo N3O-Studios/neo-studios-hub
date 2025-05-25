@@ -9,20 +9,40 @@ import { Send, ArrowRight, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/sonner';
 
-// Define all available chord types
-const chordTypes = [
-  'major', 'minor', 'sus2', 'sus4', 'aug', 'dim',
-  '7', 'maj7', 'min7', 'm7b5', 'dim7',
-  '9', 'maj9', 'min9', '11', '13',
-  'add9', 'madd9', '6', 'm6'
-];
+// Music theory data
+const noteCircleOfFifths = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'Ab', 'Eb', 'Bb', 'F'];
+const chromaticNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
-// Define all root notes
-const rootNotes = [
-  'C', 'C#', 'Db', 'D', 'D#', 'Eb', 
-  'E', 'F', 'F#', 'Gb', 'G', 'G#', 
-  'Ab', 'A', 'A#', 'Bb', 'B'
-];
+// Get notes for a chord
+const getChordNotes = (root: string, chordType: string): string[] => {
+  const rootIndex = chromaticNotes.indexOf(root);
+  if (rootIndex === -1) return [root];
+
+  const getNote = (interval: number) => chromaticNotes[(rootIndex + interval) % 12];
+
+  switch (chordType.toLowerCase()) {
+    case 'maj':
+    case 'major':
+    case '':
+      return [root, getNote(4), getNote(7)]; // 1, 3, 5
+    case 'm':
+    case 'min':
+    case 'minor':
+      return [root, getNote(3), getNote(7)]; // 1, b3, 5
+    case 'dim':
+      return [root, getNote(3), getNote(6)]; // 1, b3, b5
+    case 'aug':
+      return [root, getNote(4), getNote(8)]; // 1, 3, #5
+    case '7':
+      return [root, getNote(4), getNote(7), getNote(10)]; // 1, 3, 5, b7
+    case 'maj7':
+      return [root, getNote(4), getNote(7), getNote(11)]; // 1, 3, 5, 7
+    case 'm7':
+      return [root, getNote(3), getNote(7), getNote(10)]; // 1, b3, 5, b7
+    default:
+      return [root, getNote(4), getNote(7)];
+  }
+};
 
 type Chord = {
   name: string;
@@ -49,28 +69,32 @@ const ChordGenerator = () => {
     try {
       const numChords = parseInt(barLength);
       
-      // Use AI to generate chord progressions
+      // Use AI to generate chord progressions with specific music theory instructions
       const { data, error } = await supabase.functions.invoke('chat-with-gemini', {
         body: { 
-          message: `Generate 5 chord progressions that match this description: "${prompt}". Each progression should be ${barLength} bars long.
-            Format your response as a JSON array of objects. Each object should have:
-            1. A 'description' field with a brief description of the progression
-            2. A 'chords' array containing chord objects, each with:
-               - 'name' field for chord name (e.g., "Cmaj7")
-               - 'notes' array listing the individual notes in the chord
-            
-            Example format:
-            [
-              {
-                "description": "A melancholic 4-bar progression in A minor",
-                "chords": [
-                  {"name": "Am", "notes": ["A", "C", "E"]},
-                  {"name": "F", "notes": ["F", "A", "C"]},
-                  {"name": "G", "notes": ["G", "B", "D"]},
-                  {"name": "E", "notes": ["E", "G#", "B"]}
-                ]
-              }
-            ]`
+          message: `Generate 5 chord progressions for "${prompt}" that are ${barLength} chords long.
+
+REQUIREMENTS:
+- Use proper music theory and chord symbols
+- For minor keys, use chords that actually exist in that key
+- For "G minor", use chords like: Gm, Cm, Dm, Eb, F, Bb (not D flat major!)
+- Show constituent notes for each chord (e.g., Gm = G, Bb, D)
+
+Format as JSON array:
+[
+  {
+    "description": "Melancholic G minor progression",
+    "chords": [
+      {"name": "Gm", "notes": ["G", "Bb", "D"]},
+      {"name": "Cm", "notes": ["C", "Eb", "G"]},
+      {"name": "F", "notes": ["F", "A", "C"]},
+      {"name": "Bb", "notes": ["Bb", "D", "F"]}
+    ]
+  }
+]
+
+Generate progressions that match the mood and key requested.`,
+          chatHistory: []
         }
       });
       
@@ -80,9 +104,8 @@ const ChordGenerator = () => {
         return;
       }
       
-      // Extract the response text and parse it
+      // Extract and parse JSON from response
       try {
-        // Find the JSON part of the response
         const response = data?.response || "";
         const jsonMatch = response.match(/\[[\s\S]*\]/);
         
@@ -90,7 +113,6 @@ const ChordGenerator = () => {
           const jsonStr = jsonMatch[0];
           const parsedProgressions = JSON.parse(jsonStr);
           
-          // Validate and clean up the data
           const validProgressions = parsedProgressions
             .filter((prog: any) => prog.description && Array.isArray(prog.chords))
             .map((prog: any, i: number) => ({
@@ -99,146 +121,136 @@ const ChordGenerator = () => {
                 : `${i+1}. ${prog.description}`,
               chords: prog.chords.map((chord: any) => ({
                 name: chord.name || "Unknown",
-                notes: Array.isArray(chord.notes) ? chord.notes : [chord.name]
+                notes: Array.isArray(chord.notes) ? chord.notes : getChordNotes(chord.name?.charAt(0) || 'C', chord.name?.slice(1) || '')
               }))
             }));
           
           setProgressions(validProgressions);
         } else {
-          throw new Error('No valid JSON found in response');
+          // Fallback generation
+          const fallbackProgressions = generateMusicTheoryProgressions(prompt, numChords);
+          setProgressions(fallbackProgressions);
         }
       } catch (parseError) {
         console.error('Error parsing AI response:', parseError);
-        
-        // Fallback to simpler generation
-        const fallbackProgressions = generateFallbackProgressions(prompt, numChords);
+        const fallbackProgressions = generateMusicTheoryProgressions(prompt, numChords);
         setProgressions(fallbackProgressions);
       }
     } catch (error) {
       console.error('Error in chord generation:', error);
-      toast.error('Something went wrong. Using fallback generation.');
-      
-      // Use fallback method
-      const fallbackProgressions = generateFallbackProgressions(prompt, parseInt(barLength));
+      toast.error('Something went wrong. Using music theory fallback.');
+      const fallbackProgressions = generateMusicTheoryProgressions(prompt, parseInt(barLength));
       setProgressions(fallbackProgressions);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  // Fallback chord progression generator
-  const generateFallbackProgressions = (prompt: string, numChords: number): ChordProgression[] => {
+  // Music theory-based fallback generator
+  const generateMusicTheoryProgressions = (prompt: string, numChords: number): ChordProgression[] => {
     const progressions: ChordProgression[] = [];
     const lowerPrompt = prompt.toLowerCase();
     
+    // Determine key and mode from prompt
+    let key = 'C';
+    let isMinor = false;
+    
+    // Key detection
+    const keyMatches = lowerPrompt.match(/\b([a-g])\s*(minor|major|min|maj)?\b/i);
+    if (keyMatches) {
+      key = keyMatches[1].toUpperCase();
+      isMinor = keyMatches[2]?.toLowerCase().includes('min') || false;
+    }
+    
+    // Mood detection
+    if (lowerPrompt.includes('minor') || lowerPrompt.includes('sad') || lowerPrompt.includes('melancholy') || lowerPrompt.includes('dark')) {
+      isMinor = true;
+    }
+
     for (let i = 0; i < 5; i++) {
-      let startingChord;
-      let isMinor = false;
-      
-      // Determine mood from prompt
-      if (lowerPrompt.includes('sad') || lowerPrompt.includes('melancholy') || 
-          lowerPrompt.includes('dark') || lowerPrompt.includes('emotional')) {
-        isMinor = true;
-        startingChord = 'A';
-      } else if (lowerPrompt.includes('happy') || lowerPrompt.includes('upbeat') || 
-                lowerPrompt.includes('bright') || lowerPrompt.includes('joyful')) {
-        isMinor = false;
-        startingChord = 'C';
-      } else {
-        // Random starter
-        startingChord = rootNotes[Math.floor(Math.random() * 7)]; // More common keys
-        isMinor = Math.random() > 0.5;
-      }
-      
-      // Create chords
       const chords: Chord[] = [];
       
-      // Create first chord in progression
-      chords.push({
-        name: `${startingChord}${isMinor ? 'm' : ''}`,
-        notes: [`${startingChord}`, isMinor ? `${startingChord}m` : startingChord, isMinor ? 'E' : 'E'],
-      });
-      
-      // Common chord progressions for different moods
-      let progression: string[];
       if (isMinor) {
-        // Minor progressions
+        // Natural minor scale chord progressions
+        const keyIndex = chromaticNotes.indexOf(key);
         const minorProgressions = [
-          ['i', 'VI', 'VII', 'i'],  // Am-F-G-Am
-          ['i', 'iv', 'VII', 'III'], // Am-Dm-G-C
-          ['i', 'VII', 'VI', 'VII'], // Am-G-F-G
-          ['i', 'iv', 'v', 'i'],    // Am-Dm-Em-Am
+          [0, 3, 5, 0], // i - III - v - i
+          [0, 5, 7, 3], // i - v - VII - III
+          [0, 7, 3, 5], // i - VII - III - v
+          [0, 3, 7, 0], // i - III - VII - i
+          [0, 5, 3, 7]  // i - v - III - VII
         ];
-        progression = minorProgressions[i % minorProgressions.length];
+        
+        const progression = minorProgressions[i % minorProgressions.length];
+        const scaleNotes = [
+          chromaticNotes[keyIndex], // i
+          chromaticNotes[(keyIndex + 2) % 12], // ii
+          chromaticNotes[(keyIndex + 3) % 12], // III
+          chromaticNotes[(keyIndex + 5) % 12], // iv
+          chromaticNotes[(keyIndex + 7) % 12], // v
+          chromaticNotes[(keyIndex + 8) % 12], // VI
+          chromaticNotes[(keyIndex + 10) % 12] // VII
+        ];
+        
+        const chordTypes = ['m', '', 'm', '', '', 'm', ''];
+        
+        for (let j = 0; j < numChords; j++) {
+          const scaleIndex = progression[j % progression.length];
+          const chordRoot = scaleNotes[scaleIndex];
+          const chordType = chordTypes[scaleIndex];
+          const chordName = `${chordRoot}${chordType}`;
+          
+          chords.push({
+            name: chordName,
+            notes: getChordNotes(chordRoot, chordType)
+          });
+        }
+        
+        progressions.push({
+          chords,
+          description: `${i + 1}. ${key} minor progression - ${lowerPrompt.includes('mellow') ? 'mellow and introspective' : 'atmospheric'}`
+        });
       } else {
-        // Major progressions
+        // Major scale chord progressions
+        const keyIndex = chromaticNotes.indexOf(key);
         const majorProgressions = [
-          ['I', 'V', 'vi', 'IV'],   // C-G-Am-F
-          ['I', 'IV', 'V', 'I'],    // C-F-G-C
-          ['I', 'vi', 'IV', 'V'],   // C-Am-F-G
-          ['I', 'V', 'vi', 'iii'],  // C-G-Am-Em
+          [0, 5, 3, 4], // I - vi - IV - V
+          [0, 4, 5, 0], // I - V - vi - I
+          [0, 3, 4, 5], // I - IV - V - vi
+          [0, 5, 4, 0], // I - vi - V - I
+          [3, 5, 0, 4]  // IV - vi - I - V
         ];
-        progression = majorProgressions[i % majorProgressions.length];
-      }
-      
-      // Map roman numerals to actual chords
-      const rootIndex = rootNotes.findIndex(note => note === startingChord);
-      for (let j = 1; j < numChords; j++) {
-        const romanNumeral = progression[j % progression.length];
         
-        let chordType = '';
-        let chordRoot;
+        const progression = majorProgressions[i % majorProgressions.length];
+        const scaleNotes = [
+          chromaticNotes[keyIndex], // I
+          chromaticNotes[(keyIndex + 2) % 12], // ii
+          chromaticNotes[(keyIndex + 4) % 12], // iii
+          chromaticNotes[(keyIndex + 5) % 12], // IV
+          chromaticNotes[(keyIndex + 7) % 12], // V
+          chromaticNotes[(keyIndex + 9) % 12], // vi
+          chromaticNotes[(keyIndex + 11) % 12] // vii
+        ];
         
-        if (romanNumeral.toLowerCase() === romanNumeral) {
-          // Lowercase numeral = minor chord
-          chordType = 'm';
+        const chordTypes = ['', 'm', 'm', '', '', 'm', 'dim'];
+        
+        for (let j = 0; j < numChords; j++) {
+          const scaleIndex = progression[j % progression.length];
+          const chordRoot = scaleNotes[scaleIndex];
+          const chordType = chordTypes[scaleIndex];
+          const chordName = `${chordRoot}${chordType}`;
+          
+          chords.push({
+            name: chordName,
+            notes: getChordNotes(chordRoot, chordType)
+          });
         }
         
-        // Very simplified chord progression building
-        switch (romanNumeral.toUpperCase()) {
-          case 'I': 
-            chordRoot = rootNotes[rootIndex]; 
-            break;
-          case 'II': 
-            chordRoot = rootNotes[(rootIndex + 2) % rootNotes.length]; 
-            break;
-          case 'III': 
-            chordRoot = rootNotes[(rootIndex + 4) % rootNotes.length]; 
-            break;
-          case 'IV': 
-            chordRoot = rootNotes[(rootIndex + 5) % rootNotes.length]; 
-            break;
-          case 'V': 
-            chordRoot = rootNotes[(rootIndex + 7) % rootNotes.length]; 
-            break;
-          case 'VI': 
-            chordRoot = rootNotes[(rootIndex + 9) % rootNotes.length]; 
-            break;
-          case 'VII': 
-            chordRoot = rootNotes[(rootIndex + 11) % rootNotes.length]; 
-            break;
-          default: 
-            chordRoot = rootNotes[rootIndex];
-        }
-        
-        chords.push({
-          name: `${chordRoot}${chordType}`,
-          notes: [`${chordRoot}`, chordType === 'm' ? `${chordRoot}m` : chordRoot],
+        progressions.push({
+          chords,
+          description: `${i + 1}. ${key} major progression - ${lowerPrompt.includes('bright') ? 'bright and uplifting' : 'versatile'}`
         });
       }
-      
-      // Generate a description based on the progression
-      let description;
-      if (isMinor) {
-        description = `${i + 1}. A ${barLength}-bar ${lowerPrompt.includes('sad') ? 'melancholic' : 'atmospheric'} progression in ${startingChord} minor`;
-      } else {
-        description = `${i + 1}. A ${barLength}-bar ${lowerPrompt.includes('happy') ? 'uplifting' : 'powerful'} progression in ${startingChord} major`;
-      }
-      
-      progressions.push({
-        chords,
-        description
-      });
     }
     
     return progressions;
@@ -252,8 +264,8 @@ const ChordGenerator = () => {
         <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 p-6 mb-8">
           <h2 className="text-xl mb-4">Describe what you're looking for</h2>
           <p className="text-gray-400 mb-6">
-            Tell me what kind of chords you're looking for. For example: "Jazzy chords for a mellow intro" 
-            or "Dark and atmospheric chords in A minor"
+            Tell me what kind of chords you're looking for. For example: "Mellow intro in G minor" 
+            or "Bright pop progression in C major"
           </p>
           
           {/* Bar length selection */}
@@ -267,15 +279,15 @@ const ChordGenerator = () => {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="4" id="r1" />
-                <Label htmlFor="r1" className="text-white">4 Bars</Label>
+                <Label htmlFor="r1" className="text-white">4 Chords</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="8" id="r2" />
-                <Label htmlFor="r2" className="text-white">8 Bars</Label>
+                <Label htmlFor="r2" className="text-white">8 Chords</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="16" id="r3" />
-                <Label htmlFor="r3" className="text-white">16 Bars</Label>
+                <Label htmlFor="r3" className="text-white">16 Chords</Label>
               </div>
             </RadioGroup>
           </div>
@@ -284,7 +296,7 @@ const ChordGenerator = () => {
             <Textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe the chord progression you want..."
+              placeholder="Describe the chord progression you want... (e.g., 'mellow intro in G minor')"
               className="min-h-[100px] bg-[#2A2A30] border-none text-white resize-none focus-visible:ring-[#9b87f5]"
             />
             <Button
