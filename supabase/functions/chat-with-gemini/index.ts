@@ -35,13 +35,7 @@ serve(async (req) => {
     // Create comprehensive system prompt with NS identity and enhanced capabilities
     const systemPrompt = `Take the role of the chatbot NS described in this paragraph. Adopt its name, personality, features and everything else included: ${customIdentity}
 
-You must follow the characteristics described above but ONLY identify yourself as NS when specifically asked "who are you" or similar identity questions. Do not start every response with your name.
-
-Language Support: You fluently support ALL world languages including but not limited to: English (UK/US), Spanish, French, German, Italian, Portuguese, Russian, Arabic, Hebrew, Hindi, Bengali, Urdu, Tamil, Telugu, Gujarati, Marathi, Punjabi, Malayalam, Kannada, Odia, Assamese, Mandarin Chinese, Cantonese, Japanese, Korean, Vietnamese, Thai, Indonesian, Malay, Tagalog, Dutch, Swedish, Norwegian, Danish, Finnish, Polish, Czech, Hungarian, Romanian, Bulgarian, Croatian, Serbian, Slovak, Slovenian, Lithuanian, Latvian, Estonian, Greek, Turkish, Persian, Kurdish, Pashto, Dari, Swahili, Amharic, Yoruba, Igbo, Hausa, Zulu, Afrikaans, and many others. You automatically detect the user's language and respond accordingly with perfect grammar and cultural nuances.
-
-Phone Support: For phone support, direct users to call +44 20 7946 0958 (UK) or +1 555-NS-HELP (US) for 24/7 multilingual assistance.
-
-Music Theory Expertise: You have comprehensive knowledge of music theory, chord progressions, and can generate musically accurate chord sequences based on keys, modes, and musical styles.
+You must ALWAYS identify yourself as NS and follow the characteristics described above. You are NOT Gemini, ChatGPT, or any other AI - you are NS.
 
 Important formatting capabilities:
 - Use markdown formatting for better presentation
@@ -67,7 +61,7 @@ For equations like "x squared - 4x + 3 = 0", write it as: $x^2 - 4x + 3 = 0$
 
 CRITICAL: Always wrap mathematical expressions in $ or $$ tags for proper rendering. Never write mathematical expressions in plain text.
 
-Remember: You are NS, but only mention this when directly asked about your identity.`;
+Remember: You are NS, not any other AI system. Respond accordingly.`;
 
     // Add system message to the beginning if there's no history
     if (formattedHistory.length === 0) {
@@ -127,15 +121,20 @@ Remember: You are NS, but only mention this when directly asked about your ident
     if (data.error) {
       console.error('Gemini API error:', data.error);
       return new Response(
-        JSON.stringify({ response: "I'm experiencing a technical difficulty. Please try again." }),
+        JSON.stringify({ response: "I'm NS, and I'm experiencing a technical difficulty. Please try again." }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
       );
     }
 
     // Extract the response text
-    let responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm having trouble processing that request.";
+    let responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm NS, and I'm having trouble processing that request.";
     
-    // Return the formatted response without forcing NS identity
+    // Ensure the response follows NS identity if it doesn't already
+    if (!responseText.toLowerCase().includes('ns') && !responseText.toLowerCase().includes('i\'m ns')) {
+      responseText = `I'm NS. ${responseText}`;
+    }
+    
+    // Return the formatted response
     return new Response(
       JSON.stringify({ 
         response: responseText
@@ -150,7 +149,7 @@ Remember: You are NS, but only mention this when directly asked about your ident
   } catch (error) {
     console.error('Error in chat-with-gemini function:', error);
     return new Response(
-      JSON.stringify({ response: "I encountered an error. Please try again." }),
+      JSON.stringify({ response: "I'm NS, and I encountered an error. Please try again." }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
     );
   }
