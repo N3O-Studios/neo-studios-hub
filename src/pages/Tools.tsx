@@ -10,30 +10,30 @@ const Tools = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[#222222] p-6 rounded-lg border border-[#1EAEDB]/40">
-            <h2 className="text-xl font-bold mb-4">Chord Generator</h2>
-            <p className="mb-4 text-white/90">Generate chord progressions for your music productions.</p>
+            <h2 className="text-xl font-bold mb-4">AI Music Assistant</h2>
+            <p className="mb-4 text-white/90">Get creative assistance with our AI-powered music chatbot NS.</p>
             
-            <Link to="/chord-generator">
+            <Link to="/">
               <Button 
                 variant="outline"
                 className="bg-[#1EAEDB] text-white border-white/40 hover:bg-[#1EAEDB]/80 hover:text-white"
               >
-                Try It
+                Chat with NS
               </Button>
             </Link>
           </div>
           
           <div className="bg-[#222222] p-6 rounded-lg border border-[#1EAEDB]/40">
-            <h2 className="text-xl font-bold mb-4">AI Music Assistant</h2>
-            <p className="mb-4 text-white/90">Get creative assistance with our AI-powered music chatbot.</p>
-            <p className="text-sm text-white/80 mb-4">Coming soon</p>
+            <h2 className="text-xl font-bold mb-4">More Tools Coming Soon</h2>
+            <p className="mb-4 text-white/90">We're working on additional creative tools for music production.</p>
+            <p className="text-sm text-white/80 mb-4">Stay tuned for updates</p>
             
             <Button 
               variant="outline" 
               disabled
               className="bg-[#1EAEDB] text-white border-white/40 hover:bg-[#1EAEDB]/80 hover:text-white"
             >
-              Chat Now
+              Coming Soon
             </Button>
           </div>
         </div>

@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Productions from "./pages/Productions";
 import Tools from "./pages/Tools";
-import ChordGenerator from "./pages/ChordGenerator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,8 +21,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/productions" element={<Productions />} />
           <Route path="/tools" element={<Tools />} />
-          <Route path="/chord-generator" element={<ChordGenerator />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          {/* Removed chord generator route as requested */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
