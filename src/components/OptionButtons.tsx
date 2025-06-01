@@ -5,7 +5,7 @@ import { ChatInput } from './chat/ChatInput';
 import { ToolButtons } from './chat/ToolButtons';
 import { ProductionShowcase } from './chat/ProductionShowcase';
 import { ChatMessage } from '@/types/chat';
-import { staticChatService } from '@/services/staticChatService';
+import { chatService } from '@/services/chatService';
 
 const OptionButtons = memo(() => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
@@ -17,8 +17,7 @@ const OptionButtons = memo(() => {
     setIsLoading(true);
     
     try {
-      // Use static chat service that ensures cb_identity compliance
-      const response = await staticChatService.sendMessage(message, chatHistory);
+      const response = await chatService.sendMessage(message, chatHistory);
       
       setChatHistory(prev => [...prev, { 
         role: 'assistant', 
@@ -29,7 +28,7 @@ const OptionButtons = memo(() => {
       console.error('Error processing message:', error);
       setChatHistory(prev => [...prev, { 
         role: 'assistant', 
-        content: "I'm NS from N3O Studios, and I apologize but I'm having trouble processing that request right now. Please try again."
+        content: "I'm experiencing technical difficulties. Please try again."
       }]);
     } finally {
       setIsLoading(false);
@@ -39,7 +38,7 @@ const OptionButtons = memo(() => {
   const handleSpecialTool = useCallback((tool: string) => {
     setChatHistory(prev => [...prev, { 
       role: 'assistant', 
-      content: `I'm NS from N3O Studios. The ${tool} tool is being developed and will be available soon. Is there anything else I can help you with?`
+      content: `The ${tool} tool is being developed and will be available soon. Is there anything else I can help you with?`
     }]);
   }, []);
 

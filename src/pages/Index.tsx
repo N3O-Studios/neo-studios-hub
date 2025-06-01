@@ -29,7 +29,6 @@ const Index = () => {
           <Email />
         </div>
 
-        {/* Removed copyright text as requested */}
         <div></div>
 
         <div>

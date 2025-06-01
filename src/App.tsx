@@ -21,7 +21,6 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/productions" element={<Productions />} />
           <Route path="/tools" element={<Tools />} />
-          {/* Removed chord generator route as requested */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
