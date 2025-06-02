@@ -23,7 +23,7 @@ serve(async (req) => {
       );
     }
 
-    const { message, chatHistory, useCustomIdentity } = await req.json();
+    const { message, chatHistory } = await req.json();
 
     // Format previous messages for the Gemini API
     const formattedHistory = chatHistory.map(msg => ({
@@ -45,47 +45,28 @@ serve(async (req) => {
       timeZone: 'Europe/London'
     });
 
-    // Create comprehensive system prompt with NS identity
-    const systemPrompt = `You are NS, the AI chatbot described in this identity: ${customIdentity}
+    // Create comprehensive system prompt that will be prepended to EVERY user message
+    const systemInstruction = `IDENTITY: ${customIdentity}
 
-CRITICAL IDENTITY RULES:
-- You are NS created by N3O Studios - NEVER identify as Gemini or mention Google
-- Only mention your name NS when specifically asked "who are you" or similar identity questions
-- Do NOT start every message with "I'm NS" unless directly asked about your identity
-- Adopt the personality and characteristics described in the cb_identity
-- Use British English by default (colour, organise, etc.) unless user uses American English
-- Be approachable and articulate with occasional wit when appropriate
+CRITICAL RULES - YOU MUST FOLLOW THESE EXACTLY:
+- You are NS created by N3O Studios - NEVER identify as Gemini, Google's AI, or mention Google/Alphabet
+- NEVER say you are "Gemini" or "made by Google" - you are NS from N3O Studios
+- Only mention your name "NS" when specifically asked about your identity
+- Use British English (colour, organise, etc.) unless user uses American English
+- Current date: ${currentDate}, Current time: ${currentTime} (GMT)
 
-REAL-TIME INFORMATION (Current as of your response):
-- Current date: ${currentDate}
-- Current time: ${currentTime} (GMT)
-- You have access to real-time date and time information
-
-FORMATTING CAPABILITIES:
-- Use markdown formatting for better presentation
-- Mathematical expressions using LaTeX notation with $ for inline or $$ for block equations
-- Code blocks with proper syntax highlighting using \`\`\`language
-- Lists and tables as needed
-
-For mathematical equations, ALWAYS use LaTeX notation:
-Examples: $x^2 - 4x + 3 = 0$, $\\int_{0}^{\\infty} e^{-x} dx = 1$
-
-For code blocks, use proper markdown:
+FORMATTING:
+- Use markdown for better presentation
+- Mathematical expressions: $x^2 + 4$ (inline) or $$\\int_0^1 x dx$$ (block)
+- Code blocks with syntax highlighting:
 \`\`\`javascript
-const example = () => {
-  console.log("Hello World");
-};
+const example = "code here";
 \`\`\`
 
-Remember: Follow the NS identity but only mention your name when specifically asked about your identity.`;
+Remember: You are NS from N3O Studios. Respond naturally without constantly stating your identity.`;
 
-    // Add system message to the beginning if there's no history
-    if (formattedHistory.length === 0) {
-      formattedHistory.push({
-        role: "model",
-        parts: [{ text: systemPrompt }]
-      });
-    }
+    // Prepend the system instruction to the user's message
+    const enhancedMessage = `${systemInstruction}\n\nUser message: ${message}`;
 
     // Call the Gemini API
     const response = await fetch(
@@ -100,7 +81,7 @@ Remember: Follow the NS identity but only mention your name when specifically as
             ...formattedHistory,
             {
               role: 'user',
-              parts: [{ text: message }]
+              parts: [{ text: enhancedMessage }]
             }
           ],
           generationConfig: {
