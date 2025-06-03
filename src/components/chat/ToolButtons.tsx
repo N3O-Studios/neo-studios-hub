@@ -1,7 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { Guitar, Music, Image, Video } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Music, Image, Video } from 'lucide-react';
 
 interface ToolButtonsProps {
   onSelectTool: (tool: string) => void;
@@ -10,16 +9,6 @@ interface ToolButtonsProps {
 export const ToolButtons = ({ onSelectTool }: ToolButtonsProps) => {
   return (
     <div className="flex mt-3 gap-3 overflow-x-auto pb-1">
-      <Link to="/chord-generator">
-        <Button
-          variant="outline"
-          size="sm"
-          className="bg-transparent border-[#9b87f5]/40 text-[#9b87f5] hover:bg-[#9b87f5]/10"
-        >
-          <Guitar className="h-4 w-4 mr-2" />
-          Chord Generator
-        </Button>
-      </Link>
       <Button
         variant="outline"
         size="sm"
