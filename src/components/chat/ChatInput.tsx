@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Send, Paperclip, X } from 'lucide-react';
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, files?: File[]) => void;
   isLoading: boolean;
   showWelcome?: boolean;
 }
@@ -18,15 +18,7 @@ export const ChatInput = ({ onSendMessage, isLoading, showWelcome = false }: Cha
 
   const handleSend = () => {
     if (message.trim() || files.length > 0) {
-      let finalMessage = message;
-      
-      // Add file info to message if files are attached
-      if (files.length > 0) {
-        const fileInfo = files.map(file => `[File: ${file.name}]`).join('\n');
-        finalMessage = `${finalMessage}\n${fileInfo}`.trim();
-      }
-      
-      onSendMessage(finalMessage);
+      onSendMessage(message, files.length > 0 ? files : undefined);
       setMessage('');
       setFiles([]);
       setFilePreviewUrls([]);
@@ -68,6 +60,14 @@ export const ChatInput = ({ onSendMessage, isLoading, showWelcome = false }: Cha
     setFilePreviewUrls(filePreviewUrls.filter((_, i) => i !== index));
   };
 
+  const getFileIcon = (file: File) => {
+    if (file.type.startsWith('image/')) return '🖼️';
+    if (file.type.startsWith('text/') || file.name.endsWith('.txt') || file.name.endsWith('.md')) return '📄';
+    if (file.type.includes('pdf')) return '📕';
+    if (file.type.includes('word')) return '📘';
+    return '📎';
+  };
+
   return (
     <div className="flex flex-col gap-2 border-t border-[#9b87f5]/10 pt-4">
       {/* File previews */}
@@ -76,7 +76,7 @@ export const ChatInput = ({ onSendMessage, isLoading, showWelcome = false }: Cha
           {files.map((file, index) => (
             <div 
               key={index} 
-              className="bg-[#2A2A30] rounded-md p-2 flex items-center gap-2 group relative"
+              className="bg-[#2A2A30] rounded-md p-2 flex items-center gap-2 group relative max-w-[200px]"
             >
               {filePreviewUrls[index] ? (
                 <img 
@@ -85,11 +85,14 @@ export const ChatInput = ({ onSendMessage, isLoading, showWelcome = false }: Cha
                   className="h-10 w-10 object-cover rounded"
                 />
               ) : (
-                <div className="h-10 w-10 flex items-center justify-center bg-[#1A1F2C] rounded">
-                  <Paperclip className="h-4 w-4 text-[#9b87f5]" />
+                <div className="h-10 w-10 flex items-center justify-center bg-[#1A1F2C] rounded text-lg">
+                  {getFileIcon(file)}
                 </div>
               )}
-              <span className="text-sm text-white truncate max-w-[100px]">{file.name}</span>
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="text-sm text-white truncate">{file.name}</span>
+                <span className="text-xs text-gray-400">{(file.size / 1024).toFixed(1)} KB</span>
+              </div>
               <button 
                 onClick={() => removeFile(index)}
                 className="absolute -top-1 -right-1 bg-[#9b87f5] rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -105,7 +108,7 @@ export const ChatInput = ({ onSendMessage, isLoading, showWelcome = false }: Cha
         <Textarea 
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={showWelcome ? "Welcome! I'm NS, an AI assistant. Ask me anything..." : "Ask me anything..."}
+          placeholder={files.length > 0 ? "Ask me about these files..." : showWelcome ? "Welcome! I'm NS, an AI assistant. Ask me anything..." : "Ask me anything..."}
           className="min-h-[60px] bg-[#2A2A30] border-none text-white resize-none focus-visible:ring-[#9b87f5] transition-all duration-300 hover:bg-[#2A2A30]/90"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -134,6 +137,7 @@ export const ChatInput = ({ onSendMessage, isLoading, showWelcome = false }: Cha
               ref={fileInputRef}
               type="file"
               multiple
+              accept="image/*,.txt,.md,.pdf,.doc,.docx"
               className="hidden"
               onChange={handleFileChange}
             />

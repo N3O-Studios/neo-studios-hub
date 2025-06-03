@@ -11,13 +11,20 @@ const OptionButtons = memo(() => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
-  const handleSendMessage = useCallback(async (message: string) => {
-    const userMessage: ChatMessage = { role: 'user', content: message };
+  const handleSendMessage = useCallback(async (message: string, files?: File[]) => {
+    // Create display message with file info
+    let displayMessage = message;
+    if (files && files.length > 0) {
+      const fileInfo = files.map(file => `📎 ${file.name}`).join('\n');
+      displayMessage = message ? `${message}\n\n${fileInfo}` : fileInfo;
+    }
+    
+    const userMessage: ChatMessage = { role: 'user', content: displayMessage };
     setChatHistory(prev => [...prev, userMessage]);
     setIsLoading(true);
     
     try {
-      const response = await chatService.sendMessage(message, chatHistory);
+      const response = await chatService.sendMessage(message, chatHistory, files);
       
       setChatHistory(prev => [...prev, { 
         role: 'assistant', 

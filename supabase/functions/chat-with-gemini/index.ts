@@ -23,7 +23,7 @@ serve(async (req) => {
       );
     }
 
-    const { message, chatHistory } = await req.json();
+    const { message, chatHistory, files } = await req.json();
 
     // Format previous messages for the Gemini API
     const formattedHistory = chatHistory.map(msg => ({
@@ -45,7 +45,7 @@ serve(async (req) => {
       timeZone: 'Europe/London'
     });
 
-    // Create comprehensive system prompt that will be prepended to EVERY user message
+    // Create comprehensive system prompt
     const systemInstruction = `IDENTITY: ${customIdentity}
 
 CRITICAL RULES - YOU MUST FOLLOW THESE EXACTLY:
@@ -54,6 +54,13 @@ CRITICAL RULES - YOU MUST FOLLOW THESE EXACTLY:
 - Only mention your name "NS" when specifically asked about your identity
 - Use British English (colour, organise, etc.) unless user uses American English
 - Current date: ${currentDate}, Current time: ${currentTime} (GMT)
+
+FILE ANALYSIS CAPABILITIES:
+- You can analyze images, read text files, and understand document content
+- When files are attached, analyze them thoroughly and provide detailed insights
+- For images: describe what you see, identify objects, text, people, scenes, etc.
+- For text files: summarize content, extract key information, answer questions about the content
+- For documents: understand structure, main points, and provide analysis
 
 FORMATTING:
 - Use markdown for better presentation
@@ -65,8 +72,31 @@ const example = "code here";
 
 Remember: You are NS from N3O Studios. Respond naturally without constantly stating your identity.`;
 
-    // Prepend the system instruction to the user's message
-    const enhancedMessage = `${systemInstruction}\n\nUser message: ${message}`;
+    // Prepare the user message parts
+    const messageParts = [{ text: `${systemInstruction}\n\nUser message: ${message}` }];
+
+    // Add file content to the message if files are present
+    if (files && files.length > 0) {
+      for (const file of files) {
+        if (file.type === 'image' && file.data) {
+          // For images, add the base64 data
+          const base64Data = file.data.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+          messageParts.push({
+            inline_data: {
+              mime_type: file.mimeType,
+              data: base64Data
+            }
+          });
+          messageParts.push({ text: `\n[Image attached: ${file.name}]` });
+        } else if (file.type === 'text' && file.data) {
+          // For text files, add the content
+          messageParts.push({ text: `\n[Text file content from ${file.name}]:\n${file.data}` });
+        } else {
+          // For other files, add metadata
+          messageParts.push({ text: `\n${file.data}` });
+        }
+      }
+    }
 
     // Call the Gemini API
     const response = await fetch(
@@ -81,7 +111,7 @@ Remember: You are NS from N3O Studios. Respond naturally without constantly stat
             ...formattedHistory,
             {
               role: 'user',
-              parts: [{ text: enhancedMessage }]
+              parts: messageParts
             }
           ],
           generationConfig: {
