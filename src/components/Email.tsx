@@ -16,11 +16,11 @@ const Email = () => {
       <div className="flex flex-col items-start">
         <span className="text-sm text-white/80">Contact:</span>
         <a 
-          href="mailto:n3ostudios@gmail.com" 
+          href="mailto:n3o@n3os.com" 
           className="text-lg text-white tracking-wide transition-all duration-300"
           aria-label="Email N3O Studios"
         >
-          n3ostudios@gmail.com
+          n3o@n3os.com
         </a>
       </div>
       

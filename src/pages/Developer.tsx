@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 import Logo from "@/components/Logo";
 import Email from "@/components/Email";
 import SocialIcons from "@/components/SocialIcons";
-import OptionButtons from "@/components/OptionButtons";
 import Navigation from "@/components/Navigation";
+import DeveloperChat from "@/components/DeveloperChat";
+import TechNews from "@/components/TechNews";
+import CodeSnippetGenerator from "@/components/CodeSnippetGenerator";
 
-const Index = () => {
+const Developer = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -25,8 +27,16 @@ const Index = () => {
         <Navigation />
       </div>
 
-      <div className={`flex-grow flex flex-col items-center justify-center py-6 transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-10`}>
-        <OptionButtons />
+      <div className={`flex-grow flex flex-col items-center justify-center py-6 transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-10 gap-8`}>
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 px-4">
+          <div className="space-y-6">
+            <TechNews />
+            <CodeSnippetGenerator />
+          </div>
+          <div>
+            <DeveloperChat />
+          </div>
+        </div>
       </div>
 
       <div className={`w-full p-6 flex justify-between items-center transition-opacity duration-1000 delay-500 ${isLoaded ? 'opacity-100' : 'opacity-0'} mt-auto`}>
@@ -46,4 +56,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Developer;
