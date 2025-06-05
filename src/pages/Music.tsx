@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import Logo from "@/components/Logo";
 import Navigation from "@/components/Navigation";
-import AuthButton from "@/components/AuthButton";
 import MusicNews from "@/components/MusicNews";
 import ChordGenerator from "@/components/ChordGenerator";
 import MusicChat from "@/components/MusicChat";
@@ -19,12 +18,9 @@ const Music = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#2A2A30] text-white font-light">
       {/* Header */}
-      <div className="flex justify-between items-start pt-6 px-4 sm:px-6">
-        <div className={`flex justify-center flex-1 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="flex justify-center pt-6 px-4 sm:px-6">
+        <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <Logo />
-        </div>
-        <div className={`transition-opacity duration-1000 delay-200 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-          <AuthButton />
         </div>
       </div>
 
