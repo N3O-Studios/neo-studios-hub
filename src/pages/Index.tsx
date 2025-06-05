@@ -29,9 +29,13 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className={`flex justify-center pt-4 px-4 transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Navigation - positioned under logo, aligned with auth button */}
+      <div className={`flex justify-center items-center pt-4 px-4 transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="flex-1"></div>
         <Navigation />
+        <div className="flex-1 flex justify-end">
+          <div className="w-[120px]"></div>
+        </div>
       </div>
 
       {/* Main Content */}
