@@ -1,12 +1,11 @@
 
 import { useState, useEffect } from "react";
 import Logo from "@/components/Logo";
-import Email from "@/components/Email";
-import SocialIcons from "@/components/SocialIcons";
 import Navigation from "@/components/Navigation";
-import DeveloperChat from "@/components/DeveloperChat";
+import AuthButton from "@/components/AuthButton";
 import TechNews from "@/components/TechNews";
 import CodeSnippetGenerator from "@/components/CodeSnippetGenerator";
+import DeveloperChat from "@/components/DeveloperChat";
 
 const Developer = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -18,38 +17,35 @@ const Developer = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#1A1F2C] to-[#2A2A30] text-white font-light">
-      <div className={`flex justify-center pt-6 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0`}>
-        <Logo />
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#2A2A30] text-white font-light">
+      {/* Header */}
+      <div className="flex justify-between items-start pt-6 px-4 sm:px-6">
+        <div className={`flex justify-center flex-1 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+          <Logo />
+        </div>
+        <div className={`transition-opacity duration-1000 delay-200 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+          <AuthButton />
+        </div>
       </div>
 
-      <div className={`flex justify-center pt-4 transition-opacity duration-1000 delay-200 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Navigation */}
+      <div className={`flex justify-center pt-4 px-4 transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
         <Navigation />
       </div>
 
-      <div className={`flex-grow flex flex-col items-center justify-center py-6 transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-10 gap-8`}>
-        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 px-4">
+      {/* Main Content */}
+      <div className={`container mx-auto px-4 py-6 transition-opacity duration-1000 delay-400 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
+          {/* Left Column */}
           <div className="space-y-6">
             <TechNews />
             <CodeSnippetGenerator />
           </div>
+          
+          {/* Right Column */}
           <div>
             <DeveloperChat />
           </div>
-        </div>
-      </div>
-
-      <div className={`w-full p-6 flex justify-between items-center transition-opacity duration-1000 delay-500 ${isLoaded ? 'opacity-100' : 'opacity-0'} mt-auto`}>
-        <div>
-          <Email />
-        </div>
-
-        <div className="text-sm text-white/60">
-          © 2024 N3OStudios
-        </div>
-
-        <div>
-          <SocialIcons />
         </div>
       </div>
     </div>
