@@ -5,7 +5,6 @@ import Email from "@/components/Email";
 import SocialIcons from "@/components/SocialIcons";
 import OptionButtons from "@/components/OptionButtons";
 import Navigation from "@/components/Navigation";
-import HamburgerMenu from "@/components/HamburgerMenu";
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -41,8 +40,7 @@ const Index = () => {
           <Email />
         </div>
 
-        <div className="text-sm text-white/60 order-first sm:order-none flex items-center gap-2">
-          <HamburgerMenu />
+        <div className="text-sm text-white/60 order-first sm:order-none">
           <span>© 2025 N3OStudios</span>
         </div>
 
