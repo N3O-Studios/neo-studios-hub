@@ -46,7 +46,7 @@ const AuthButton = () => {
           }
         });
         if (error) throw error;
-        toast({ title: 'Check your email for the confirmation link!' });
+        toast({ title: 'Account created! Please check your email to verify.' });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -74,17 +74,17 @@ const AuthButton = () => {
   if (user) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-white/80 text-sm hidden sm:inline">
-          {user.user_metadata?.name || user.email}
+        <span className="text-white/80 text-xs hidden sm:inline max-w-24 truncate">
+          {user.user_metadata?.name || user.email?.split('@')[0]}
         </span>
         <Button
           variant="outline"
           size="sm"
           onClick={handleSignOut}
-          className="bg-transparent border-[#9b87f5]/40 text-[#9b87f5] hover:bg-[#9b87f5]/10"
+          className="bg-transparent border-[#9b87f5]/40 text-[#9b87f5] hover:bg-[#9b87f5]/10 h-8 px-2"
         >
-          <LogOut className="h-4 w-4" />
-          <span className="hidden sm:inline ml-2">Sign Out</span>
+          <LogOut className="h-3 w-3" />
+          <span className="hidden sm:inline ml-1 text-xs">Sign Out</span>
         </Button>
       </div>
     );
@@ -96,10 +96,10 @@ const AuthButton = () => {
         <Button
           variant="outline"
           size="sm"
-          className="bg-transparent border-[#9b87f5]/40 text-[#9b87f5] hover:bg-[#9b87f5]/10"
+          className="bg-transparent border-[#9b87f5]/40 text-[#9b87f5] hover:bg-[#9b87f5]/10 h-8 px-2"
         >
-          <UserIcon className="h-4 w-4" />
-          <span className="hidden sm:inline ml-2">Sign In</span>
+          <UserIcon className="h-3 w-3" />
+          <span className="hidden sm:inline ml-1 text-xs">Sign In</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-[#1A1F2C] border-[#9b87f5]/30 text-white max-w-md">

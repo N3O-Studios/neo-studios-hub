@@ -4,7 +4,6 @@ import Logo from "@/components/Logo";
 import Email from "@/components/Email";
 import SocialIcons from "@/components/SocialIcons";
 import OptionButtons from "@/components/OptionButtons";
-import Navigation from "@/components/Navigation";
 import AuthButton from "@/components/AuthButton";
 
 const Index = () => {
@@ -20,17 +19,13 @@ const Index = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#1A1F2C] to-[#2A2A30] text-white font-light">
       {/* Header with Logo */}
       <div className="flex justify-between items-start pt-6 px-4 sm:px-6">
-        <div className={`flex justify-center flex-1 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0`}>
+        <div className="w-16"></div> {/* Spacer for balance */}
+        <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0`}>
           <Logo />
         </div>
         <div className={`transition-opacity duration-1000 delay-200 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <AuthButton />
         </div>
-      </div>
-
-      {/* Navigation */}
-      <div className={`flex justify-center pt-4 px-4 transition-opacity duration-1000 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-        <Navigation />
       </div>
 
       {/* Main Content */}
