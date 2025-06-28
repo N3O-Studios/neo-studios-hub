@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/types/chat';
@@ -9,17 +8,24 @@ import remarkGfm from 'remark-gfm';
 import 'katex/dist/katex.min.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import ChatHamburgerMenu from './ChatHamburgerMenu';
 
 interface ChatDisplayProps {
   chatHistory: ChatMessage[];
   isLoading: boolean;
   disableAutoScroll?: boolean;
+  chatType?: 'music' | 'developer' | 'general';
+  onLoadChat?: (messages: ChatMessage[]) => void;
+  onNewChat?: () => void;
 }
 
 export const ChatDisplay = ({
   chatHistory,
   isLoading,
-  disableAutoScroll = true // Default to disabled
+  disableAutoScroll = true,
+  chatType = 'general',
+  onLoadChat,
+  onNewChat
 }: ChatDisplayProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -37,7 +43,17 @@ export const ChatDisplay = ({
         *NS can make mistakes, double check important information
       </div>
       
-      <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-12">
+      {/* Hamburger Menu below disclaimer */}
+      <div className="absolute top-16 right-4 z-10">
+        <ChatHamburgerMenu 
+          chatType={chatType}
+          currentChatHistory={chatHistory}
+          onLoadChat={onLoadChat}
+          onNewChat={onNewChat}
+        />
+      </div>
+      
+      <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-20">
         <div className="flex flex-col">
           {chatHistory.length === 0 ? (
             <div className="text-center py-12 text-gray-400">

@@ -1,4 +1,3 @@
-
 import { useState, useCallback, memo } from 'react';
 import { ChatDisplay } from './chat/ChatDisplay';
 import { ChatInput } from './chat/ChatInput';
@@ -49,6 +48,14 @@ const OptionButtons = memo(() => {
     }]);
   }, []);
 
+  const handleLoadChat = useCallback((messages: ChatMessage[]) => {
+    setChatHistory(messages);
+  }, []);
+
+  const handleNewChat = useCallback(() => {
+    setChatHistory([]);
+  }, []);
+
   return (
     <div className="w-full max-w-3xl">
       <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 overflow-hidden">
@@ -56,6 +63,9 @@ const OptionButtons = memo(() => {
           chatHistory={chatHistory} 
           isLoading={isLoading}
           disableAutoScroll={true}
+          chatType="general"
+          onLoadChat={handleLoadChat}
+          onNewChat={handleNewChat}
         />
         
         <div className="p-4">
