@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import Logo from "@/components/Logo";
 import AuthButton from "@/components/AuthButton";
-import ChatHamburgerMenu from "@/components/ChatHamburgerMenu";
+import ChatHamburgerMenu from "@/components/chat/ChatHamburgerMenu";
 import MusicNews from "@/components/MusicNews";
 import ChordGenerator from "@/components/ChordGenerator";
 import MusicChat from "@/components/MusicChat";
