@@ -1,0 +1,23 @@
+tr {
+    border-bottom: 2px solid white;
+    white-space: nowrap;
+}
+
+td, th {
+    min-width: 3em;
+    /* padding: 1px 6px; */
+    vertical-align: middle;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+}
+
+table {
+    table-layout: auto;
+    width: 80%;
+    margin: 12px 10% 12px 10%;
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+}
