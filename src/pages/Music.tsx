@@ -1,8 +1,6 @@
-
 import { useState, useEffect } from "react";
 import Logo from "@/components/Logo";
 import AuthButton from "@/components/AuthButton";
-import ChatHamburgerMenu from "@/components/ChatHamburgerMenu";
 import MusicNews from "@/components/MusicNews";
 import ChordGenerator from "@/components/ChordGenerator";
 import MusicChat from "@/components/MusicChat";
@@ -38,11 +36,8 @@ const Music = () => {
             <ChordGenerator />
           </div>
           
-          {/* Right Column with Chat Menu */}
+          {/* Right Column - Chat without external menu */}
           <div className="relative">
-            <div className="absolute top-2 right-2 z-10">
-              <ChatHamburgerMenu chatType="music" />
-            </div>
             <MusicChat />
           </div>
         </div>
