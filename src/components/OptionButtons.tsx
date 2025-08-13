@@ -1,3 +1,4 @@
+
 import { useState, useCallback, memo } from 'react';
 import { ChatDisplay } from './chat/ChatDisplay';
 import { ChatInput } from './chat/ChatInput';
@@ -42,19 +43,10 @@ const OptionButtons = memo(() => {
   }, [chatHistory]);
 
   const handleSpecialTool = useCallback((tool: string) => {
-    let toolName = tool.replace(' Generator', '').replace(' Detector', '').replace(' Splitter', '');
     setChatHistory(prev => [...prev, { 
       role: 'assistant', 
-      content: `${toolName} tool is currently WIP. Is there anything else I can help you with?`
+      content: `The ${tool} tool is being developed and will be available soon. Is there anything else I can help you with?`
     }]);
-  }, []);
-
-  const handleLoadChat = useCallback((messages: ChatMessage[]) => {
-    setChatHistory(messages);
-  }, []);
-
-  const handleNewChat = useCallback(() => {
-    setChatHistory([]);
   }, []);
 
   return (
@@ -64,9 +56,6 @@ const OptionButtons = memo(() => {
           chatHistory={chatHistory} 
           isLoading={isLoading}
           disableAutoScroll={true}
-          chatType="general"
-          onLoadChat={handleLoadChat}
-          onNewChat={handleNewChat}
         />
         
         <div className="p-4">

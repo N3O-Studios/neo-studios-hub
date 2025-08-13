@@ -20,11 +20,8 @@ const Index = () => {
       {/* Header with Logo */}
       <div className="flex justify-between items-start pt-6 px-4 sm:px-6">
         <div className="w-16"></div> {/* Spacer for balance */}
-        <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0 flex flex-col items-center`}>
+        <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0`}>
           <Logo />
-          <p className="text-white/80 text-sm mt-2 font-light tracking-wide">
-            The Ultimate Website for Music Producers
-          </p>
         </div>
         <div className={`transition-opacity duration-1000 delay-200 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <AuthButton />

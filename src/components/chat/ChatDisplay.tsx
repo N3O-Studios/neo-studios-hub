@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/types/chat';
@@ -8,24 +9,17 @@ import remarkGfm from 'remark-gfm';
 import 'katex/dist/katex.min.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import ChatHamburgerMenu from './ChatHamburgerMenu';
 
 interface ChatDisplayProps {
   chatHistory: ChatMessage[];
   isLoading: boolean;
   disableAutoScroll?: boolean;
-  chatType?: 'music' | 'developer' | 'general';
-  onLoadChat?: (messages: ChatMessage[]) => void;
-  onNewChat?: () => void;
 }
 
 export const ChatDisplay = ({
   chatHistory,
   isLoading,
-  disableAutoScroll = true,
-  chatType = 'general',
-  onLoadChat,
-  onNewChat
+  disableAutoScroll = true // Default to disabled
 }: ChatDisplayProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -38,14 +32,9 @@ export const ChatDisplay = ({
 
   return (
     <div className="relative">
-      {/* Hamburger Menu below disclaimer */}
-      <div className="absolute top-4 right-4 z-10">
-        <ChatHamburgerMenu 
-          chatType={chatType}
-          currentChatHistory={chatHistory}
-          onLoadChat={onLoadChat}
-          onNewChat={onNewChat}
-        />
+      {/* Disclaimer text in top right with better positioning */}
+      <div className="absolute top-4 right-4 text-xs text-gray-400 italic z-10 bg-[#1A1F2C]/80 px-2 py-1 rounded">
+        *NS can make mistakes, double check important information
       </div>
       
       <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-12">

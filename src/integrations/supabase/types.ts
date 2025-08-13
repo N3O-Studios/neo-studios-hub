@@ -9,30 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      user_credits: {
-        Row: {
-          id: string
-          user_id: string
-          credits: number
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          credits?: number
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          credits?: number
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           created_at: string | null
@@ -111,20 +87,6 @@ export type Database = {
         Args: {
           _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
-        }
-        Returns: boolean
-      }
-      deduct_credits: {
-        Args: {
-          user_id_param: string
-          amount: number
-        }
-        Returns: boolean
-      }
-      add_credits: {
-        Args: {
-          user_id_param: string
-          amount: number
         }
         Returns: boolean
       }

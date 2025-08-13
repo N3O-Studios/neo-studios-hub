@@ -1,6 +1,8 @@
+
 import { useState, useEffect } from "react";
 import Logo from "@/components/Logo";
 import AuthButton from "@/components/AuthButton";
+import ChatHamburgerMenu from "@/components/ChatHamburgerMenu";
 import TechNews from "@/components/TechNews";
 import CodeSnippetGenerator from "@/components/CodeSnippetGenerator";
 import DeveloperChat from "@/components/DeveloperChat";
@@ -36,8 +38,11 @@ const Developer = () => {
             <CodeSnippetGenerator />
           </div>
           
-          {/* Right Column - Chat without external menu */}
+          {/* Right Column with Chat Menu */}
           <div className="relative">
+            <div className="absolute top-2 right-2 z-10">
+              <ChatHamburgerMenu chatType="developer" />
+            </div>
             <DeveloperChat />
           </div>
         </div>
