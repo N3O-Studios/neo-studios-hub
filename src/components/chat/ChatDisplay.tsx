@@ -38,13 +38,8 @@ export const ChatDisplay = ({
 
   return (
     <div className="relative">
-      {/* Disclaimer text in top right with better positioning */}
-      <div className="absolute top-4 right-4 text-xs text-gray-400 italic z-10 bg-[#1A1F2C]/80 px-2 py-1 rounded">
-        *NS can make mistakes, double check important information
-      </div>
-      
       {/* Hamburger Menu below disclaimer */}
-      <div className="absolute top-16 right-4 z-10">
+      <div className="absolute top-4 right-4 z-10">
         <ChatHamburgerMenu 
           chatType={chatType}
           currentChatHistory={chatHistory}
@@ -53,7 +48,7 @@ export const ChatDisplay = ({
         />
       </div>
       
-      <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-20">
+      <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-12">
         <div className="flex flex-col">
           {chatHistory.length === 0 ? (
             <div className="text-center py-12 text-gray-400">

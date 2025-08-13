@@ -6,11 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
-import { LogIn, LogOut, User as UserIcon } from 'lucide-react';
+import { LogIn, LogOut, User as UserIcon, Coins } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const AuthButton = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [credits, setCredits] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
@@ -19,6 +20,7 @@ const AuthButton = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  // Get user session and credits
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -26,10 +28,34 @@ const AuthButton = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchUserCredits(session.user.id);
+      } else {
+        setCredits(null);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch user credits when user changes
+  useEffect(() => {
+    if (user) {
+      fetchUserCredits(user.id);
+    }
+  }, [user]);
+
+  const fetchUserCredits = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('user_credits')
+      .select('credits')
+      .eq('user_id', userId)
+      .single();
+    
+    if (data && !error) {
+      setCredits(data.credits);
+    }
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +66,7 @@ const AuthButton = () => {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
           options: {
             data: { name },
             emailRedirectTo: `${window.location.origin}/`
@@ -74,6 +101,12 @@ const AuthButton = () => {
   if (user) {
     return (
       <div className="flex items-center gap-2">
+        {credits !== null && (
+          <div className="flex items-center gap-1 text-white/80 text-xs bg-[#9b87f5]/20 px-2 py-1 rounded">
+            <Coins className="h-3 w-3" />
+            <span>{credits}</span>
+          </div>
+        )}
         <span className="text-white/80 text-xs hidden sm:inline max-w-24 truncate">
           {user.user_metadata?.name || user.email?.split('@')[0]}
         </span>

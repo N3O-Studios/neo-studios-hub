@@ -42,9 +42,10 @@ const OptionButtons = memo(() => {
   }, [chatHistory]);
 
   const handleSpecialTool = useCallback((tool: string) => {
+    let toolName = tool.replace(' Generator', '').replace(' Detector', '').replace(' Splitter', '');
     setChatHistory(prev => [...prev, { 
       role: 'assistant', 
-      content: `The ${tool} tool is being developed and will be available soon. Is there anything else I can help you with?`
+      content: `${toolName} tool is currently WIP. Is there anything else I can help you with?`
     }]);
   }, []);
 
