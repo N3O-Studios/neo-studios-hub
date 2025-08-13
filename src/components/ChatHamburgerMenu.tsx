@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 interface SavedChat {
   id: string;
   title: string;
-  messages: any[];
+  messages: any;
   created_at: string;
 }
 
