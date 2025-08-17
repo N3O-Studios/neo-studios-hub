@@ -24,9 +24,9 @@ const Index = () => {
             <AuthButton />
           </div>
         </div>
-        <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0 text-center`}>
+        <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0 text-center w-full flex flex-col items-center`}>
           <Logo />
-          <p className="text-white/80 text-xl mt-6 font-light" style={{ fontFamily: 'Bahnschrift, Arial, sans-serif' }}>
+          <p className="text-white/80 text-xl mt-6 font-light text-center" style={{ fontFamily: 'Bahnschrift, Arial, sans-serif' }}>
             The Ultimate Website for Music Producers
           </p>
         </div>

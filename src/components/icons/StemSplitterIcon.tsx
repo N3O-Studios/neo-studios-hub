@@ -21,22 +21,33 @@ export const StemSplitterIcon: React.FC<StemSplitterIconProps> = ({
       strokeLinejoin="round"
       className={className}
     >
-      {/* Main horizontal line */}
-      <line x1="2" y1="12" x2="10" y2="12" />
+      {/* Main horizontal bar */}
+      <line x1="2" y1="12" x2="8" y2="12" strokeWidth="3" />
       
-      {/* Splitting point */}
-      <circle cx="10" cy="12" r="1" fill="currentColor" />
+      {/* Primary split into 3 branches */}
+      <line x1="8" y1="12" x2="14" y2="8" strokeWidth="2" />
+      <line x1="8" y1="12" x2="14" y2="12" strokeWidth="2" />
+      <line x1="8" y1="12" x2="14" y2="16" strokeWidth="2" />
       
-      {/* Branch lines - rectilinear drainage pattern */}
-      <line x1="10" y1="12" x2="22" y2="6" />
-      <line x1="10" y1="12" x2="22" y2="12" />
-      <line x1="10" y1="12" x2="22" y2="18" />
+      {/* Secondary splits - top branch */}
+      <line x1="14" y1="8" x2="18" y2="6" strokeWidth="1.5" />
+      <line x1="14" y1="8" x2="18" y2="10" strokeWidth="1.5" />
       
-      {/* Secondary branches */}
-      <line x1="16" y1="6" x2="20" y2="4" />
-      <line x1="16" y1="6" x2="20" y2="8" />
-      <line x1="16" y1="18" x2="20" y2="16" />
-      <line x1="16" y1="18" x2="20" y2="20" />
+      {/* Secondary splits - middle branch */}
+      <line x1="14" y1="12" x2="18" y2="11" strokeWidth="1.5" />
+      <line x1="14" y1="12" x2="18" y2="13" strokeWidth="1.5" />
+      
+      {/* Secondary splits - bottom branch */}
+      <line x1="14" y1="16" x2="18" y2="14" strokeWidth="1.5" />
+      <line x1="14" y1="16" x2="18" y2="18" strokeWidth="1.5" />
+      
+      {/* Tertiary splits */}
+      <line x1="18" y1="6" x2="22" y2="5" strokeWidth="1" />
+      <line x1="18" y1="10" x2="22" y2="9" strokeWidth="1" />
+      <line x1="18" y1="11" x2="22" y2="10.5" strokeWidth="1" />
+      <line x1="18" y1="13" x2="22" y2="13.5" strokeWidth="1" />
+      <line x1="18" y1="14" x2="22" y2="15" strokeWidth="1" />
+      <line x1="18" y1="18" x2="22" y2="19" strokeWidth="1" />
     </svg>
   );
 };
