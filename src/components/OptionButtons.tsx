@@ -50,7 +50,7 @@ const OptionButtons = memo(() => {
   }, []);
 
   return (
-    <div className="w-full max-w-3xl">
+    <div className="w-full max-w-5xl">
       <div className="bg-[#1A1F2C] rounded-lg border border-[#9b87f5]/30 overflow-hidden">
         <ChatDisplay 
           chatHistory={chatHistory} 
@@ -58,7 +58,7 @@ const OptionButtons = memo(() => {
           disableAutoScroll={true}
         />
         
-        <div className="p-4">
+        <div className="p-6">
           <ChatInput 
             onSendMessage={handleSendMessage} 
             isLoading={isLoading} 

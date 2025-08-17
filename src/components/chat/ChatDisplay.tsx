@@ -37,7 +37,7 @@ export const ChatDisplay = ({
         *NS can make mistakes, double check important information
       </div>
       
-      <ScrollArea className="h-[420px] overflow-y-auto px-4 pt-12">
+      <ScrollArea className="h-[500px] overflow-y-auto px-6 pt-12">
         <div className="flex flex-col">
           {chatHistory.length === 0 ? (
             <div className="text-center py-12 text-gray-400">

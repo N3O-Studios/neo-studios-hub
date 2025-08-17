@@ -1,7 +1,8 @@
 
 import { Button } from '@/components/ui/button';
-import { Wrench, Music, Image, Video, FileAudio, BarChart2 } from 'lucide-react';
+import { Wrench, Music, Image, Video, FileAudio } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { StemSplitterIcon } from '@/components/icons/StemSplitterIcon';
 
 interface ToolButtonsProps {
   onSelectTool: (tool: string) => void;
@@ -13,7 +14,7 @@ export const ToolButtons = ({ onSelectTool }: ToolButtonsProps) => {
     { name: "Image Generator", icon: Image, status: "Image tool is currently WIP" },
     { name: "Video Generator", icon: Video, status: "Video tool is currently WIP" },
     { name: "Chord Detector", icon: FileAudio, status: "Chord detector is currently WIP" },
-    { name: "Stem Splitter", icon: BarChart2, status: "Stem splitter is currently WIP" }
+    { name: "Stem Splitter", icon: StemSplitterIcon, status: "Stem splitter is currently WIP" }
   ];
 
   return (

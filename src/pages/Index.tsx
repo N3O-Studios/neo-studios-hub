@@ -18,16 +18,17 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#1A1F2C] to-[#2A2A30] text-white font-light">
       {/* Header with Logo */}
-      <div className="flex justify-between items-start pt-6 px-4 sm:px-6">
-        <div className="w-16"></div> {/* Spacer for balance */}
+      <div className="flex justify-center items-start pt-6 px-4 sm:px-6 relative">
+        <div className="absolute top-6 right-4 sm:right-6">
+          <div className={`transition-opacity duration-1000 delay-200 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+            <AuthButton />
+          </div>
+        </div>
         <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0 text-center`}>
           <Logo />
-          <p className="text-white/80 text-lg mt-4 font-light" style={{ fontFamily: 'Bahnschrift, Arial, sans-serif' }}>
+          <p className="text-white/80 text-xl mt-6 font-light" style={{ fontFamily: 'Bahnschrift, Arial, sans-serif' }}>
             The Ultimate Website for Music Producers
           </p>
-        </div>
-        <div className={`transition-opacity duration-1000 delay-200 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-          <AuthButton />
         </div>
       </div>
 
