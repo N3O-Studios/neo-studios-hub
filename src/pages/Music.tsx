@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import Logo from "@/components/Logo";
-import AuthButton from "@/components/AuthButton";
 import ChatHamburgerMenu from "@/components/ChatHamburgerMenu";
 import MusicNews from "@/components/MusicNews";
 import ChordGenerator from "@/components/ChordGenerator";
@@ -23,9 +22,6 @@ const Music = () => {
         <div className="w-16"></div> {/* Spacer for balance */}
         <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <Logo />
-        </div>
-        <div className={`transition-opacity duration-1000 delay-200 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-          <AuthButton />
         </div>
       </div>
 

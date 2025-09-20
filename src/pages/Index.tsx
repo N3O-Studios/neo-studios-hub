@@ -4,7 +4,6 @@ import Logo from "@/components/Logo";
 import Email from "@/components/Email";
 import SocialIcons from "@/components/SocialIcons";
 import OptionButtons from "@/components/OptionButtons";
-import AuthButton from "@/components/AuthButton";
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -20,9 +19,6 @@ const Index = () => {
       {/* Header with Logo */}
       <div className="flex justify-center items-start pt-6 px-4 sm:px-6 relative">
         <div className="absolute top-6 right-4 sm:right-6">
-          <div className={`transition-opacity duration-1000 delay-200 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-            <AuthButton />
-          </div>
         </div>
         <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} z-0 text-center w-full flex flex-col items-center`}>
           <Logo />
