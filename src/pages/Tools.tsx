@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { FileEdit } from "lucide-react";
 
 const Tools = () => {
   return (
@@ -24,7 +25,10 @@ const Tools = () => {
           </div>
           
           <div className="bg-[#222222] p-6 rounded-lg border border-[#1EAEDB]/40">
-            <h2 className="text-xl font-bold mb-4">Blogs</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <FileEdit className="h-6 w-6 text-[#1EAEDB]" />
+              <h2 className="text-xl font-bold">Blogs</h2>
+            </div>
             <p className="mb-4 text-white/90">Discover the latest AI tools and trends with our monthly blog updates.</p>
             
             <Link to="/blogs">
