@@ -22,42 +22,18 @@ serve(async (req) => {
       throw new Error('Prompt is required')
     }
 
+    console.log('Sending request to Gemini API with prompt:', prompt)
+
     // Build request payload for Gemini 2.5 Flash Image model
-    const payload = {
-      contents: [
-        {
-          parts: [
-            { text: prompt }
-          ]
-        }
-      ],
-      generationConfig: {
-        temperature: 1.0,
-        maxOutputTokens: 8192,
-      },
-      safetySettings: [
-        {
-          category: "HARM_CATEGORY_HARASSMENT",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        },
-        {
-          category: "HARM_CATEGORY_HATE_SPEECH", 
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        },
-        {
-          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        },
-        {
-          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        }
+    const contents = [{
+      parts: [
+        { text: prompt }
       ]
-    }
+    }]
 
     // Add reference image if provided
     if (referenceImage) {
-      payload.contents[0].parts.push({
+      contents[0].parts.push({
         inlineData: {
           mimeType: "image/jpeg",
           data: referenceImage.replace(/^data:image\/[a-z]+;base64,/, '')
@@ -65,11 +41,13 @@ serve(async (req) => {
       })
     }
 
-    console.log('Sending request to Gemini API with prompt:', prompt)
+    const payload = {
+      contents: contents
+    }
 
     // Make request to Gemini API
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
@@ -109,7 +87,8 @@ serve(async (req) => {
     }
 
     if (!imageBase64) {
-      throw new Error('No image data found in response')
+      console.error('Response parts:', JSON.stringify(parts, null, 2))
+      throw new Error('No image data found in response. The model may have returned text instead of an image.')
     }
 
     // Return the base64 image data
