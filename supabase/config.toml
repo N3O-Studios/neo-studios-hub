@@ -3,3 +3,6 @@ project_id = "phvndlmnuksjohbrasvs"
 
 [functions.chat-with-gemini]
 verify_jwt = false
+
+[functions.gemini-image-generator]
+verify_jwt = false

@@ -6,10 +6,12 @@ import { ToolButtons } from './chat/ToolButtons';
 import { ProductionShowcase } from './chat/ProductionShowcase';
 import { ChatMessage } from '@/types/chat';
 import { chatService } from '@/services/chatService';
+import ImageGenerator from './ImageGenerator';
 
 const OptionButtons = memo(() => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeComponent, setActiveComponent] = useState<string | null>(null);
   
   const handleSendMessage = useCallback(async (message: string, files?: File[]) => {
     // Create display message with file info
@@ -42,12 +44,34 @@ const OptionButtons = memo(() => {
     }
   }, [chatHistory]);
 
-  const handleSpecialTool = useCallback((tool: string) => {
+  const handleSpecialTool = useCallback((tool: string, component?: string) => {
+    if (component) {
+      setActiveComponent(component);
+      return;
+    }
+    
     setChatHistory(prev => [...prev, { 
       role: 'assistant', 
-      content: `The ${tool} tool is being developed and will be available soon. Is there anything else I can help you with?`
+      content: `${tool}`
     }]);
   }, []);
+
+  // Show specific component if active
+  if (activeComponent === 'ImageGenerator') {
+    return (
+      <div className="w-full max-w-5xl">
+        <div className="mb-4">
+          <button 
+            onClick={() => setActiveComponent(null)}
+            className="text-[#9b87f5] hover:text-[#7E69AB] text-sm"
+          >
+            ← Back to Chat
+          </button>
+        </div>
+        <ImageGenerator />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-5xl">

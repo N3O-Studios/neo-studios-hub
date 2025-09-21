@@ -5,13 +5,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { StemSplitterIcon } from '@/components/icons/StemSplitterIcon';
 
 interface ToolButtonsProps {
-  onSelectTool: (tool: string) => void;
+  onSelectTool: (tool: string, component?: string) => void;
 }
 
 export const ToolButtons = ({ onSelectTool }: ToolButtonsProps) => {
   const tools = [
     { name: "Music Generator", icon: Music, status: "Music tool is currently WIP" },
-    { name: "Image Generator", icon: Image, status: "Image tool is currently WIP" },
+    { name: "Image Generator", icon: Image, component: "ImageGenerator" },
     { name: "Blogs", icon: FileEdit, status: "Check out our monthly AI tools blog for the latest trends" },
     { name: "Chord Detector", icon: FileAudio, status: "Chord detector is currently WIP" },
     { name: "Stem Splitter", icon: StemSplitterIcon, status: "Stem splitter is currently WIP" }
@@ -41,7 +41,7 @@ export const ToolButtons = ({ onSelectTool }: ToolButtonsProps) => {
                   variant="ghost"
                   size="sm"
                   className="w-full justify-start text-white/70 hover:text-[#9b87f5] hover:bg-[#9b87f5]/10"
-                  onClick={() => onSelectTool(tool.status)}
+                  onClick={() => onSelectTool(tool.status || tool.name, tool.component)}
                 >
                   <IconComponent className="h-4 w-4 mr-2" />
                   {tool.name}
