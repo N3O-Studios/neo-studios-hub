@@ -7,7 +7,6 @@ import { ProductionShowcase } from './chat/ProductionShowcase';
 import { ChatMessage } from '@/types/chat';
 import { chatService } from '@/services/chatService';
 import ImageGenerator from './ImageGenerator';
-import BlogSection from './BlogSection';
 
 const OptionButtons = memo(() => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
@@ -94,7 +93,7 @@ const OptionButtons = memo(() => {
         </div>
       </div>
       
-      <BlogSection />
+      <ProductionShowcase />
     </div>
   );
 });

@@ -1,6 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { Wrench, Music, Image, FileAudio } from 'lucide-react';
+import { Wrench, Music, Image, FileEdit, FileAudio } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { StemSplitterIcon } from '@/components/icons/StemSplitterIcon';
 
@@ -12,6 +12,7 @@ export const ToolButtons = ({ onSelectTool }: ToolButtonsProps) => {
   const tools = [
     { name: "Music Generator", icon: Music, status: "Music tool is currently WIP" },
     { name: "Image Generator", icon: Image, component: "ImageGenerator" },
+    { name: "Blogs", icon: FileEdit, status: "Check out our monthly AI tools blog for the latest trends" },
     { name: "Chord Detector", icon: FileAudio, status: "Chord detector is currently WIP" },
     { name: "Stem Splitter", icon: StemSplitterIcon, status: "Stem splitter is currently WIP" }
   ];
